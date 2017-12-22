@@ -32,6 +32,18 @@ import java.util.List;
  */
 public class turtle {
     /**
+     * The color mode used if RGB values should be specified as numbers
+     * between 0.0 and 1.0. This is the default color mode.
+     */
+    public static final double COLOR_MODE_1 = 1.0;
+
+    /**
+     * The color mode to use if RGB values should be specified as numbers
+     * between 0.0 and 255.0.
+     */
+    public static final double COLOR_MODE_255 = 255.0;
+
+    /**
      * The default width of the turtle's world in pixels.
      */
     private static final double WIDTH = 700;
@@ -40,9 +52,6 @@ public class turtle {
      * The default height of the turtle's world.
      */
     private static final double HEIGHT = 700;
-
-    private static final double COLOR_MODE_1 = 1.0;
-    private static final double COLOR_MODE_255 = 255.0;
 
     /**
      * Default speed in pixels per second.
@@ -147,6 +156,7 @@ public class turtle {
         // the group used to draw all of the various lines and shapes
         root = new Group();
 
+        // sets the default color mode to 1.0
         colorMode = COLOR_MODE_1;
 
         // set the default pen color and fill color
@@ -160,17 +170,23 @@ public class turtle {
         turtleShape.setTranslateX(250);
         turtleShape.setTranslateY(250);
 
+        // add the turtle to the root node...
         root.getChildren().add(turtleShape);
 
+        // the pen starts in the down state by default
         penDown = true;
 
+        // the tracer is enabled by default
         tracer = true;
 
+        // the animator is a producer/consumer thread that insures that
+        // animations are executed in order.
         animator = new Animator();
         Thread animationThread = new Thread(animator);
         animationThread.setDaemon(true);
         animationThread.start();
 
+        // by default the turtle is not displayed.
         notDisplayed = true;
     }
 
@@ -194,6 +210,14 @@ public class turtle {
         return tracer;
     }
 
+    /**
+     * Sets the color mode to either 1.0 (all RGB values are specified as
+     * floating point values between 0.0 and 1.0) or 255 (all RGB values are
+     * specified as floating point values between 0.0 and 255.0). All other
+     * values are ignored.
+     *
+     * @param colorMode Either 1.0 or 255. All other values are ignored.
+     */
     public void colorMode(double colorMode) {
         if(colorMode == COLOR_MODE_1) {
             this.colorMode = COLOR_MODE_1;
@@ -203,6 +227,12 @@ public class turtle {
         }
     }
 
+    /**
+     * Returns the current color mode; either  {@link #COLOR_MODE_1} or
+     * {@link #COLOR_MODE_255}.
+     *
+     * @return The current color mode.
+     */
     public double colorMode() {
         return colorMode;
     }
