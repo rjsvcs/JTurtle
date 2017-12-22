@@ -43,6 +43,14 @@ public class turtle {
      */
     public static final double COLOR_MODE_255 = 255.0;
 
+    public static final int SPEED_SLOWEST = 1;
+
+    public static final int SPEED_DEFAULT = 5;
+
+    public static final int SPEED_FAST = 10;
+
+    public static final int SPEED_FASTEST = 0;
+
     /**
      * The default width of the turtle's world in pixels.
      */
@@ -56,7 +64,7 @@ public class turtle {
     /**
      * Default speed in pixels per second.
      */
-    private static final double PIXELS_PER_SECOND = 200;
+    private static final double PIXELS_PER_UNIT_OF_SPEED = 100;
 
     /**
      * The default speed at which the turtle turns in degrees per second.
@@ -163,7 +171,7 @@ public class turtle {
         penColor = Color.BLACK;
         fillColor = Color.BLACK;
 
-        speed = PIXELS_PER_SECOND;
+        speed = SPEED_DEFAULT;
 
         // initialize the turtle to be an arrow head.
         turtleShape = new Polygon(0, 0, -3.75, -5, 10, 0, -3.75, 5);
@@ -452,6 +460,24 @@ public class turtle {
     }
 
     /**
+     * Sets the turtle's speed to the specified value.
+     *
+     * @param speed The new speed of the turtle, a value between 1 (slow) and
+     *              10 (fast) or 0 (fastest).
+     */
+    public void speed(int speed) {
+        if(speed <= SPEED_FASTEST) {
+            this.speed = SPEED_FASTEST;
+        }
+        else if( speed >= SPEED_FAST) {
+            this.speed = SPEED_FAST;
+        }
+        else {
+            this.speed = speed;
+        }
+    }
+
+    /**
      * Given a starting and an ending point, returns the approriate duration
      * of the animation given the current speed and tracer settings.
      *
@@ -465,10 +491,19 @@ public class turtle {
     private Duration getDuration(double startX, double startY,
                                double endX, double endY) {
         // if the tracer is enabled, the duration is calculated...
-        if(tracer) {
-            // it id the distance (in pixels) divided by the current speed.
+        if(tracer && speed != SPEED_FASTEST) {
+            // calculate the distance
             double distance = euclidianDistance(startX, startY, endX, endY);
-            return Duration.millis(distance / speed * 1000);
+            // calculate the number of pixels that the turtle should travel
+            // per second
+            double pixels_per_second = speed != SPEED_FASTEST ?
+                            PIXELS_PER_UNIT_OF_SPEED * speed : 1000;
+            double seconds = distance / pixels_per_second;
+
+            System.out.println("distance=" + distance + ", speed=" + speed +
+                    ", pps=" + pixels_per_second + ", s=" + seconds);
+
+            return Duration.millis(seconds * 1000.0);
         }
         else {
             // if the tracer is disabled, the speed is instantaneous (1 ms).
