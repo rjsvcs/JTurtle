@@ -43,12 +43,24 @@ public class turtle {
      */
     public static final double COLOR_MODE_255 = 255.0;
 
+    /**
+     * The slowest configurable speed for the turtle (1).
+     */
     public static final int SPEED_SLOWEST = 1;
 
+    /**
+     * The default speed for the turtle (5).
+     */
     public static final int SPEED_DEFAULT = 5;
 
+    /**
+     * A fast speed for the turtle (10).
+     */
     public static final int SPEED_FAST = 10;
 
+    /**
+     * The fastest speed for the turtle (0).
+     */
     public static final int SPEED_FASTEST = 0;
 
     /**
@@ -341,7 +353,9 @@ public class turtle {
     }
 
     public void forward(double distance) {
-        display();
+        Point2D endPoint = calculateEndPoint(angle, distance, x, y);
+        setPosition(endPoint.getX(), endPoint.getY());
+
     }
 
     public void bk(double distance) {
@@ -475,6 +489,24 @@ public class turtle {
         else {
             this.speed = speed;
         }
+    }
+
+    private Point2D calculateEndPoint(double angle, double distance,
+                                      double startX, double startY) {
+
+        double radians = Math.toRadians(angle);
+
+        // calculate the distance in the x direction
+        double sine = Math.sin(radians);
+        double newX = distance * sine + startX;
+
+        double cosine = Math.cos(radians);
+        double newY = distance * cosine + startY;
+
+        System.out.println("newX=" + newX + ", newY=" + newY + ", distance="
+                + euclidianDistance(startX, startY, newX, newY));
+
+        return new Point2D(newX, newY);
     }
 
     /**
