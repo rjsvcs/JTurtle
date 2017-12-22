@@ -93,7 +93,7 @@ public class turtle {
     private double y;
 
     /**
-     * The JavaFX groupt to which all shapes are added to be rendered.
+     * The JavaFX group to which all shapes are added to be rendered.
      */
     private Group root;
 
