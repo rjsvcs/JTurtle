@@ -410,10 +410,10 @@ public class turtle {
             keyValues[3] = new KeyValue(line.endYProperty(), realY);
         }
 
-        double duration = getDuration(x, y, realX, realY);
+        Duration duration = getDuration(x, y, realX, realY);
 
         animation.getKeyFrames().add(
-                new KeyFrame(Duration.millis(duration), keyValues));
+                new KeyFrame(duration, keyValues));
 
         x = realX;
         y = realY;
@@ -429,13 +429,38 @@ public class turtle {
         setPosition(x - WIDTH / 2, newY);
     }
 
-    private double getDuration(double startX, double startY,
+    /**
+     * Given a starting and an ending point, returns the approriate duration
+     * of the animation given the current speed and tracer settings.
+     *
+     * @param startX The starting x-coordinate.
+     * @param startY The starting y-coordinate.
+     * @param endX The ending y-coordinate.
+     * @param endY The ending y-coordinate.
+     *
+     * @return The {@link Duration} that the animation should require.
+     */
+    private Duration getDuration(double startX, double startY,
                                double endX, double endY) {
-        double distance = euclidianDistance(startX, startY, endX, endY);
-
-        return distance / PIXELS_PER_SECOND * 1000;
+        // if the tracer is enabled, the duration is calculated...
+        if(tracer) {
+            // it id the distance (in pixels) divided by the current speed.
+            double distance = euclidianDistance(startX, startY, endX, endY);
+            return Duration.millis(distance / speed * 1000);
+        }
+        else {
+            // if the tracer is disabled, the speed is instantaneous (1 ms).
+            return Duration.ONE;
+        }
     }
 
+    /**
+     * Sets the turtle's pen color using an animation to insure that it occurs
+     * at the appropriate point in time (otherwise the color would change in
+     * the midst of other animations; nonsensical).
+     *
+     * @param color The new pen color.
+     */
     private void penColor(Color color) {
         penColor = color;
 
@@ -444,6 +469,13 @@ public class turtle {
         animator.addAnimation(animation);
     }
 
+    /**
+     * Sets the turtle's fill color using an animation to insure that it
+     * occurs at the appropriate point in time (otherwise the color would
+     * change in the midst of other animations; nonsensical).
+     *
+     * @param color The new fill color.
+     */
     private void fillColor(Color color) {
         fillColor = color;
 
@@ -452,6 +484,17 @@ public class turtle {
         animator.addAnimation(animation);
     }
 
+    /**
+     * Helper method that makes a new {@Color color} from the provided RGB
+     * values. The provided values must be compatible with the current color
+     * mode.
+     *
+     * @param red The red value.
+     * @param green The green value.
+     * @param blue The blue value.
+     *
+     * @return The new {@link Color}.
+     */
     private Color makeColor(double red, double green, double blue) {
         if(colorMode == COLOR_MODE_255) {
             red = (double)red / 255;
