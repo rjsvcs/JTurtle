@@ -9,6 +9,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -23,7 +24,7 @@ public class turtle {
     private static final double WIDTH = 500;
     private static final double HEIGHT = 500;
 
-    private static final double DURATION = 5000;
+    private static final double DURATION = 1000;
 
     public static final turtle turtle = new turtle();
 
@@ -118,16 +119,23 @@ public class turtle {
         setPosition(x, y);
     }
 
-    public void setPosition(double x, double y) {
+    public void setPosition(double newX, double newY) {
+        double realX = newX += WIDTH / 2;
+        double realY = newY += HEIGHT / 2;
 
+        Timeline animation = new Timeline(
+            new KeyFrame(Duration.millis(DURATION),
+                new KeyValue(turtleShape.translateXProperty(), realX),
+                new KeyValue(turtleShape.translateYProperty(), realY)));
+        animator.addAnimation(animation);
     }
 
-    public void setX(double x) {
-
+    public void setX(double newX) {
+        setPosition(newX, y);
     }
 
-    public void setY(double y) {
-
+    public void setY(double newY) {
+        setPosition(x, newY);
     }
 
     private void repaint() {
