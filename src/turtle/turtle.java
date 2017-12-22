@@ -41,6 +41,9 @@ public class turtle {
      */
     private static final double HEIGHT = 700;
 
+    private static final double COLOR_MODE_1 = 1.0;
+    private static final double COLOR_MODE_255 = 255.0;
+
     /**
      * Default speed in pixels per second.
      */
@@ -97,9 +100,20 @@ public class turtle {
     private boolean penDown;
 
     /**
+     * The color mode. Set to either 1.0 for 0.0-1.0 RGB values or 255 for
+     * 0-255 color values.
+     */
+    private double colorMode;
+
+    /**
      * The color used for the turtle's pen.
      */
     private Color penColor;
+
+    /**
+     * The color used for the turtle's fills.
+     */
+    private Color fillColor;
 
     /**
      * The speed at which the turtle moves.
@@ -133,16 +147,22 @@ public class turtle {
         // the group used to draw all of the various lines and shapes
         root = new Group();
 
+        colorMode = COLOR_MODE_1;
+
+        // set the default pen color and fill color
+        penColor = Color.BLACK;
+        fillColor = Color.BLACK;
+
         // initialize the turtle to be an arrow head.
         turtleShape = new Polygon(0, 0, -3.75, -5, 10, 0, -3.75, 5);
-        turtleShape.setFill(Color.BLACK);
+        turtleShape.setStroke(penColor);
+        turtleShape.setFill(fillColor);
         turtleShape.setTranslateX(250);
         turtleShape.setTranslateY(250);
 
         root.getChildren().add(turtleShape);
 
         penDown = true;
-        penColor = Color.BLACK;
 
         tracer = true;
 
@@ -174,27 +194,17 @@ public class turtle {
         return tracer;
     }
 
-    /**
-     * Sets the pen's color the the specified RGB values using integer values
-     * between 0 and 255.
-     *
-     * @param red The value for the red channel.
-     * @param green The value for the green channel.
-     * @param blue The value for the red channel.
-     */
-    public void penColor(int red, int green, int blue) {
-        if(red < 0 || red > 255 ||
-                green < 0 || green > 255 ||
-                blue < 0 || blue > 255 ) {
-            throw new IllegalArgumentException("bad color sequence: (" +
-                    red + ", " + green + ", " + blue + ")");
+    public void colorMode(double colorMode) {
+        if(colorMode == COLOR_MODE_1) {
+            this.colorMode = COLOR_MODE_1;
         }
+        else if(colorMode == COLOR_MODE_255) {
+            this.colorMode = COLOR_MODE_255;
+        }
+    }
 
-        double realRed = (double)red / 255;
-        double realGreen = (double)green / 255;
-        double realBlue = (double)blue / 255;
-
-        penColor(realRed, realGreen, realBlue);
+    public double colorMode() {
+        return colorMode;
     }
 
     /**
@@ -206,32 +216,41 @@ public class turtle {
      * @param blue The value for the red channel.
      */
     public void penColor(double red, double green, double blue) {
-        if(red < 0 || red > 1 ||
-                green < 0 || green > 1 ||
-                blue < 0 || blue > 1 ) {
-            throw new IllegalArgumentException("bad color sequence: (" +
-                red + ", " + green + ", " + blue + ")");
-        }
-
-        penColor = new Color(red, green, blue, 1.0);
+        penColor(makeColor(red, green, blue));
     }
 
     /**
      * Sets the pen's color to the color matching the specified string.
      *
      * @param color The name of the color to which the pen color should be
-     *              set.
+     *              set. Must be a valid color from the colors defined in the
+     *              {@link Color} class.
      */
     public void penColor(String color) {
-        String upperColor = color.toUpperCase();
+        penColor(makeColor(color));
+    }
 
-        try {
-            Field theColor = Color.class.getField(color.toUpperCase());
-            penColor = (Color)theColor.get(null);
-        }
-        catch(Exception e) {
-            throw new IllegalArgumentException("bad color string: " + color);
-        }
+    /**
+     * Sets the fill color to the specified RGB values using decimal values
+     * between 0.0 and 1.0.
+     *
+     * @param red The value for the red channel.
+     * @param green The value for the green channel.
+     * @param blue The value for the red channel.
+     */
+    public void fillColor(double red, double green, double blue) {
+        fillColor(makeColor(red, green, blue));
+    }
+
+    /**
+     * Sets the fill color to the color matching the specified string.
+     *
+     * @param color The name of the color to which the pen color should be
+     *              set. Must be a valid color from the colors defined in the
+     *              {@link Color} class.
+     */
+    public void fillColor(String color) {
+        fillColor(makeColor(color));
     }
 
     public void pd() {
@@ -366,6 +385,51 @@ public class turtle {
         double distance = euclidianDistance(startX, startY, endX, endY);
 
         return distance / PIXELS_PER_SECOND * 1000;
+    }
+
+    private void penColor(Color color) {
+        penColor = color;
+
+        Timeline animation = new Timeline(new KeyFrame(Duration.ONE,
+                new KeyValue(turtleShape.strokeProperty(), color)));
+        animator.addAnimation(animation);
+    }
+
+    private void fillColor(Color color) {
+        fillColor = color;
+
+        Timeline animation = new Timeline(new KeyFrame(Duration.ONE,
+                new KeyValue(turtleShape.fillProperty(), color)));
+        animator.addAnimation(animation);
+    }
+
+    private Color makeColor(double red, double green, double blue) {
+        if(colorMode == COLOR_MODE_255) {
+            red = (double)red / 255;
+            green = (double)green / 255;
+            blue = (double)blue / 255;
+        }
+
+        if(red < 0 || red > 1 ||
+                green < 0 || green > 1 ||
+                blue < 0 || blue > 1 ) {
+            throw new IllegalArgumentException("bad color sequence: (" +
+                    red + ", " + green + ", " + blue + ")");
+        }
+
+        return new Color(red, green, blue, 1.0);
+    }
+
+    private Color makeColor(String color) {
+        String upperColor = color.toUpperCase();
+
+        try {
+            Field theColor = Color.class.getField(color.toUpperCase());
+            return (Color)theColor.get(null);
+        }
+        catch(Exception e) {
+            throw new IllegalArgumentException("bad color string: " + color);
+        }
     }
 
     private double euclidianDistance(double startX, double startY,
