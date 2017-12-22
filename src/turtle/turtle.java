@@ -167,8 +167,8 @@ public class turtle {
         turtleShape = new Polygon(0, 0, -3.75, -5, 10, 0, -3.75, 5);
         turtleShape.setStroke(penColor);
         turtleShape.setFill(fillColor);
-        turtleShape.setTranslateX(250);
-        turtleShape.setTranslateY(250);
+        turtleShape.setTranslateX(x);
+        turtleShape.setTranslateY(y);
 
         // add the turtle to the root node...
         root.getChildren().add(turtleShape);
@@ -283,29 +283,48 @@ public class turtle {
         fillColor(makeColor(color));
     }
 
+    /**
+     * Sets the pen into the down (drawing) position.
+     */
     public void pd() {
         penDown();
     }
 
+    /**
+     * Sets the pen into the down (drawing) position.
+     */
     public void down() {
         penDown();
     }
 
+    /**
+     * Sets the pen into the down (drawing) position.
+     */
     public void penDown() {
         penDown = true;
     }
 
+    /**
+     * Lifts the pen into the up (not drawing) position.
+     */
     public void pu() {
         penUp();
     }
 
+    /**
+     * Lifts the pen into the up (not drawing) position.
+     */
     public void up() {
         penUp();
     }
 
+    /**
+     * Lifts the pen into the up (not drawing) position.
+     */
     public void penUp() {
         penDown = false;
     }
+
 
     public void fd(double distance) {
         forward(distance);
@@ -371,7 +390,7 @@ public class turtle {
         display();
 
         double realX = newX += WIDTH / 2;
-        double realY = newY += HEIGHT / 2;
+        double realY = HEIGHT / 2 - newY;
 
         Timeline animation = new Timeline();
 
@@ -403,11 +422,11 @@ public class turtle {
     }
 
     public void setX(double newX) {
-        setPosition(newX, y);
+        setPosition(newX, HEIGHT / 2 - y);
     }
 
     public void setY(double newY) {
-        setPosition(x, newY);
+        setPosition(x - WIDTH / 2, newY);
     }
 
     private double getDuration(double startX, double startY,
@@ -470,10 +489,17 @@ public class turtle {
         return start.distance(end);
     }
 
+    /**
+     * If the JavaFX turtle application is not yet displayed, this method will
+     * display it. It is called automatically from any method that moves the
+     * turtle.
+     */
     private void display() {
         if(notDisplayed) {
+            // initialize the JavaFX platform
             PlatformImpl.startup(() -> {
             });
+            // launch the turtle application
             Platform.runLater(() -> {
                 try {
                     new TurtleApp().start(new Stage());
@@ -485,6 +511,9 @@ public class turtle {
         }
     }
 
+    /**
+     * The turtle application. Displays the turtle's world in a JavaFX window.
+     */
     private static class TurtleApp extends Application {
 
         @Override
@@ -497,17 +526,31 @@ public class turtle {
             primaryStage.sizeToScene();
             primaryStage.show();
         }
-
-        @Override
-        public void stop() throws Exception {
-            // TODO: kill the animator?
-        }
     }
 
+    /**
+     * A helper {@link Thread} that implements the producer/consumer design
+     * pattern to insure that each turtle command/animation is executed in
+     * turn.
+     */
     private static class Animator implements Runnable,
             EventHandler<ActionEvent> {
+
+        /**
+         * The queue of {@link Animation animations} that need to be consumed.
+         */
         private final List<Animation> queue;
+
+        /**
+         * Indicates whether or not the most recent animation has yet
+         * finished.
+         */
         private boolean finished;
+
+        /**
+         * Used to determine when the animator should terminate (e.g. upon an
+         * exception).
+         */
         private boolean running;
 
         Animator() {
@@ -520,22 +563,38 @@ public class turtle {
         public void run() {
             synchronized(queue) {
                 while(running) {
+                    // if the most recent animation has finished and there is
+                    // at least one more animation to animate...
                     if(finished && queue.size() > 0) {
+                        // indicate that the animation that is about to start
+                        // is not finished...
                         finished = false;
+                        // get the next animation
                         Animation next = queue.remove(0);
+                        // add the animator as the on finish handler...
                         next.setOnFinished(this);
+                        // and start the animation
                         next.play();
                     }
 
+                    // wait for the next animation to be queued.
                     try {
                         queue.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    }
+                    catch (InterruptedException e) {
+                        // terminate on exception
+                        running = false;
                     }
                 }
             }
         }
 
+        /**
+         * Called when each animation finishes so that the next animation can
+         * be started (if there is one in the queue).
+         *
+         * @param event The event indicating that an animation has completed.
+         */
         @Override
         public void handle(ActionEvent event) {
             synchronized(queue) {
@@ -544,6 +603,13 @@ public class turtle {
             }
         }
 
+        /**
+         * Adds the specified {@link Animation} to the queue of
+         * {@link Animation animations} to be performed.
+         *
+         * @param animation The {@link Animation} to add to the queue of
+         * {@link Animation animations} to be performed.
+         */
         private void addAnimation(Animation animation) {
             synchronized(queue) {
                 queue.add(animation);
