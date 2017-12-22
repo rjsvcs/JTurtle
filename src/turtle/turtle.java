@@ -132,18 +132,18 @@ public class turtle {
     /**
      * Indicates whether or not the tracer is enabled; if true, the turtle
      * draws at its configured speed. If disabled, the turtle draws nearly
-     * instantly.
+     * instantaneously.
      */
     private boolean tracer;
 
     /**
-     * The current visibility of the turtle's world; false if the turle's
+     * The current visibility of the turtle's world; false if the turtle's
      * world is not currently being displayed.
      */
     private boolean notDisplayed;
 
     /**
-     * Initialized the turtle with its default settings.
+     * Initializes the turtle with its default settings.
      */
     private turtle() {
         // facing east
@@ -188,7 +188,7 @@ public class turtle {
         animationThread.setDaemon(true);
         animationThread.start();
 
-        // by default the turtle is not displayed.
+        // by default the turtle;s world is not displayed.
         notDisplayed = true;
     }
 
@@ -230,7 +230,7 @@ public class turtle {
     }
 
     /**
-     * Returns the current color mode; either  {@link #COLOR_MODE_1} or
+     * Returns the current color mode; either {@link #COLOR_MODE_1} or
      * {@link #COLOR_MODE_255}.
      *
      * @return The current color mode.
@@ -241,7 +241,7 @@ public class turtle {
 
     /**
      * Sets the pen's color to the specified RGB values using decimal values
-     * between 0.0 and 1.0.
+     * based on the current color mode.
      *
      * @param red The value for the red channel.
      * @param green The value for the green channel.
@@ -264,7 +264,7 @@ public class turtle {
 
     /**
      * Sets the fill color to the specified RGB values using decimal values
-     * between 0.0 and 1.0.
+     * based on the current color mode.
      *
      * @param red The value for the red channel.
      * @param green The value for the green channel.
