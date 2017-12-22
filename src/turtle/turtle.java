@@ -1,96 +1,122 @@
 package turtle;
 
 import com.sun.javafx.application.PlatformImpl;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.*;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class turtle {
+    private static final double WIDTH = 500;
+    private static final double HEIGHT = 500;
 
-    private static final turtle THE_TURTLE = new turtle();
+    private static final double DURATION = 1000;
 
-    private static final int WIDTH = 500;
-    private static final int HEIGHT = 500;
+    public static final turtle turtle = new turtle();
 
-    private double x;
-    private double y;
-    private double angle;
+    private Group root;
+
+    private Shape turtleShape;
+
+    private Animator animator;
 
     private boolean notDisplayed;
 
-    private TurtleCanvas canvas;
-
     private turtle() {
-        x = 0;
-        y = 0;
-        angle = 0;
 
-        canvas = new TurtleCanvas(this);
-        canvas.setHeight(HEIGHT);
-        canvas.setWidth(WIDTH);
+        root = new Group();
+
+        turtleShape = new Polygon(0, 0, 7.5, 5, 0, 10);
+        turtleShape.setFill(Color.BLACK);
+        turtleShape.setTranslateX(250);
+        turtleShape.setTranslateY(250);
+
+        root.getChildren().add(turtleShape);
+
+        animator = new Animator();
+        Thread animationThread = new Thread(animator);
+        animationThread.start();
 
         notDisplayed = true;
     }
 
-    public static void fd(double distance) {
+    public void fd(double distance) {
         forward(distance);
     }
 
-    public static void forward(double distance) {
-        THE_TURTLE.display();
-        THE_TURTLE.canvas.repaint();
+    public void forward(double distance) {
+        turtle.repaint();
     }
 
-    public static void bk(double distance) {
+    public void bk(double distance) {
         backward(distance);
     }
 
-    public static void back(double distance) {
+    public void back(double distance) {
         backward(distance);
     }
 
-    public static void backward(double distance) {
+    public void backward(double distance) {
 
     }
 
-    public static void rt(double degrees) {
+    public void rt(double degrees) {
         right(degrees);
     }
 
-    public static void right(double degrees) {
-
+    public void right(double degrees) {
+        Timeline animation = new Timeline(
+                new KeyFrame(Duration.millis(DURATION),
+                new KeyValue(turtleShape.rotateProperty(), degrees)));
+        animator.addAnimation(animation);
     }
 
-    public static void lt(double degrees) {
+    public void lt(double degrees) {
         left(degrees);
     }
 
-    public static void left(double degrees) {
-
+    public void left(double degrees) {
+        Timeline animation = new Timeline(
+                new KeyFrame(Duration.millis(DURATION),
+                new KeyValue(turtleShape.rotateProperty(), -degrees)));
+        animator.addAnimation(animation);
     }
 
-    public static void goTo(double x, double y) {
+    public void goTo(double x, double y) {
         setPosition(x, y);
     }
 
-    public static void setPos(double x, double y) {
+    public void setPos(double x, double y) {
         setPosition(x, y);
     }
 
-    public static void setPosition(double x, double y) {
+    public void setPosition(double x, double y) {
 
     }
 
-    public static void setX(double x) {
+    public void setX(double x) {
 
     }
 
-    public static void setY(double y) {
+    public void setY(double y) {
+
+    }
+
+    private void repaint() {
+        display();
 
     }
 
@@ -109,37 +135,66 @@ public class turtle {
         }
     }
 
-    public static class TurtleApp extends Application {
+    private static class TurtleApp extends Application {
 
         @Override
-        public void start(Stage primaryStage) throws Exception {
-            Pane root = new Pane();
-            root.getChildren().add(THE_TURTLE.canvas);
-
-            Scene scene = new Scene(root);
+        public void start(Stage primaryStage) {
+            Scene scene = new Scene(turtle.root, WIDTH, HEIGHT,
+                    Color.GHOSTWHITE);
 
             primaryStage.setTitle("JTurtle!");
             primaryStage.setScene(scene);
             primaryStage.sizeToScene();
             primaryStage.show();
         }
+
+        @Override
+        public void stop() throws Exception {
+            // TODO: kill the animator?
+        }
     }
 
-    private static class TurtleCanvas extends Canvas {
-        private turtle turtle;
+    private static class Animator implements Runnable,
+            EventHandler<ActionEvent> {
+        private final List<Animation> queue;
+        private boolean running;
 
-        TurtleCanvas(turtle turtle) {
-            this.turtle = turtle;
+        Animator() {
+            queue = new LinkedList<>();
+            running = true;
         }
 
-        private void repaint() {
-            GraphicsContext g = getGraphicsContext2D();
+        @Override
+        public void run() {
+            synchronized(queue) {
+                while(running) {
+                    if (queue.size() > 0) {
+                        Animation next = queue.remove(0);
+                        next.setOnFinished(this);
+                        next.play();
+                    }
 
-            g.clearRect(0, 0, getWidth(), getHeight());
+                    try {
+                        queue.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
 
-            g.setFill(Color.RED);
+        @Override
+        public void handle(ActionEvent event) {
+            synchronized(queue) {
+                queue.notify();
+            }
+        }
 
-            g.fillRect(0, 0, getWidth(), getHeight());
+        private void addAnimation(Animation animation) {
+            synchronized(queue) {
+                queue.add(animation);
+                queue.notify();
+            }
         }
     }
 }
