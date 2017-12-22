@@ -23,19 +23,26 @@ public class turtle {
     private static final double WIDTH = 500;
     private static final double HEIGHT = 500;
 
-    private static final double DURATION = 1000;
+    private static final double DURATION = 5000;
 
     public static final turtle turtle = new turtle();
 
-    private Group root;
-
     private Shape turtleShape;
+    private double angle;
+    private double x;
+    private double y;
+
+    private Group root;
 
     private Animator animator;
 
     private boolean notDisplayed;
 
     private turtle() {
+
+        angle = 0;
+        x = 0;
+        y = 0;
 
         root = new Group();
 
@@ -78,9 +85,13 @@ public class turtle {
     }
 
     public void right(double degrees) {
+        angle += degrees;
+        System.out.println(angle);
+
+        repaint();
         Timeline animation = new Timeline(
                 new KeyFrame(Duration.millis(DURATION),
-                new KeyValue(turtleShape.rotateProperty(), degrees)));
+                new KeyValue(turtleShape.rotateProperty(), angle)));
         animator.addAnimation(animation);
     }
 
@@ -89,9 +100,13 @@ public class turtle {
     }
 
     public void left(double degrees) {
+        angle -= degrees;
+        System.out.println(angle);
+
+        repaint();
         Timeline animation = new Timeline(
                 new KeyFrame(Duration.millis(DURATION),
-                new KeyValue(turtleShape.rotateProperty(), -degrees)));
+                new KeyValue(turtleShape.rotateProperty(), angle)));
         animator.addAnimation(animation);
     }
 
