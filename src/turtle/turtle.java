@@ -127,7 +127,7 @@ public class turtle {
     /**
      * The speed at which the turtle moves.
      */
-    private int speed;
+    private double speed;
 
     /**
      * Indicates whether or not the tracer is enabled; if true, the turtle
@@ -162,6 +162,8 @@ public class turtle {
         // set the default pen color and fill color
         penColor = Color.BLACK;
         fillColor = Color.BLACK;
+
+        speed = PIXELS_PER_SECOND;
 
         // initialize the turtle to be an arrow head.
         turtleShape = new Polygon(0, 0, -3.75, -5, 10, 0, -3.75, 5);
