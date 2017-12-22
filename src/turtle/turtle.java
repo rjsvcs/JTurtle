@@ -348,10 +348,20 @@ public class turtle {
 
     }
 
+    /**
+     * Turns the turtle right the specified number of degrees.
+     *
+     * @param degrees The number of degrees to turn the turtle to the right.
+     */
     public void rt(double degrees) {
         right(degrees);
     }
 
+    /**
+     * Turns the turtle right the specified number of degrees.
+     *
+     * @param degrees The number of degrees to turn the turtle to the right.
+     */
     public void right(double degrees) {
         angle += degrees;
 
@@ -364,10 +374,20 @@ public class turtle {
         animator.addAnimation(animation);
     }
 
+    /**
+     * Turns the turtle left the specified number of degrees.
+     *
+     * @param degrees The number of degrees to turn the turtle to the left.
+     */
     public void lt(double degrees) {
         left(degrees);
     }
 
+    /**
+     * Turns the turtle left the specified number of degrees.
+     *
+     * @param degrees The number of degrees to turn the turtle to the left.
+     */
     public void left(double degrees) {
         angle -= degrees;
 
