@@ -98,19 +98,7 @@ public class turtle {
      */
     private double angle;
 
-    /**
-     * The turtle's current x-coordinate position (this is the real x
-     * coordinate with 0,0 in the top left of the window, NOT the turtle
-     * coordinate with 0,0 in the center of the window).
-     */
-    private double x;
-
-    /**
-     * The turtle's current y-coordinate position (this is the real y
-     * coordinate with 0,0 in the top left of the window, NOT the turtle
-     * coordinate with 0,0 in the center of the window).
-     */
-    private double y;
+    private Point2D location;
 
     /**
      * The JavaFX group to which all shapes are added to be rendered.
@@ -170,8 +158,7 @@ public class turtle {
         angle = 0;
 
         //in the center of the canvas
-        x = WIDTH / 2;
-        y = HEIGHT / 2;
+        location = new Point2D(0, 0);
 
         // the group used to draw all of the various lines and shapes
         root = new Group();
@@ -189,8 +176,8 @@ public class turtle {
         turtleShape = new Polygon(0, 0, -3.75, -5, 10, 0, -3.75, 5);
         turtleShape.setStroke(penColor);
         turtleShape.setFill(fillColor);
-        turtleShape.setTranslateX(x);
-        turtleShape.setTranslateY(y);
+        turtleShape.setTranslateX(WIDTH / 2);
+        turtleShape.setTranslateY(HEIGHT / 2);
 
         // add the turtle to the root node...
         root.getChildren().add(turtleShape);
@@ -257,6 +244,14 @@ public class turtle {
      */
     public double colorMode() {
         return colorMode;
+    }
+
+    public void color(String color) {
+        turtle.penColor(color);
+    }
+
+    public void color(double red, double green, double blue) {
+        turtle.penColor(red, green, blue);
     }
 
     /**
@@ -353,8 +348,6 @@ public class turtle {
     }
 
     public void forward(double distance) {
-        Point2D endPoint = calculateEndPoint(angle, distance, x, y);
-        setPosition(endPoint.getX(), endPoint.getY());
 
     }
 
@@ -433,44 +426,46 @@ public class turtle {
     public void setPosition(double newX, double newY) {
         display();
 
-        double realX = newX += WIDTH / 2;
-        double realY = HEIGHT / 2 - newY;
+        Point2D start = translateToCoordinates(location);
+        location = new Point2D(newX, newY);
+        Point2D end = translateToCoordinates(location);
 
         Timeline animation = new Timeline();
 
         KeyValue[] keyValues = new KeyValue[penDown ? 4 : 2];
-        keyValues[0] = new KeyValue(turtleShape.translateXProperty(), realX);
-        keyValues[1] = new KeyValue(turtleShape.translateYProperty(), realY);
+        keyValues[0] = new KeyValue(turtleShape.translateXProperty(),
+                end.getX());
+        keyValues[1] = new KeyValue(turtleShape.translateYProperty(),
+                end.getY());
 
         if(penDown) {
-            Line line = new Line(x, y, x, y);
+            Line line = new Line(start.getX(), start.getY(), start.getX(),
+                    start.getY());
             line.setStroke(Color.TRANSPARENT);
 
             animation.getKeyFrames().add(new KeyFrame(Duration.ONE,
                     new KeyValue(line.strokeProperty(), penColor)));
 
             root.getChildren().add(line);
-            keyValues[2] = new KeyValue(line.endXProperty(), realX);
-            keyValues[3] = new KeyValue(line.endYProperty(), realY);
+            keyValues[2] = new KeyValue(line.endXProperty(), end.getX());
+            keyValues[3] = new KeyValue(line.endYProperty(), end.getY());
         }
 
-        Duration duration = getDuration(x, y, realX, realY);
+        Duration duration = getDuration(start.getX(), start.getY(),
+                end.getX(), end.getY());
 
         animation.getKeyFrames().add(
                 new KeyFrame(duration, keyValues));
-
-        x = realX;
-        y = realY;
 
         animator.addAnimation(animation);
     }
 
     public void setX(double newX) {
-        setPosition(newX, HEIGHT / 2 - y);
+        //setPosition(newX, HEIGHT / 2 - y);
     }
 
     public void setY(double newY) {
-        setPosition(x - WIDTH / 2, newY);
+        //setPosition(x - WIDTH / 2, newY);
     }
 
     /**
@@ -491,13 +486,26 @@ public class turtle {
         }
     }
 
+    private Point2D translateToCoordinates(Point2D point) {
+        return translateToCoordinates(point.getX(), point.getY());
+    }
+
+    private Point2D translateToCoordinates(double x, double y) {
+        double realX = x += WIDTH / 2;
+        double realY = HEIGHT / 2 - y;
+
+        return new Point2D(realX, realY);
+    }
+
     private Point2D calculateEndPoint(double angle, double distance,
                                       double startX, double startY) {
+
+        Point2D start = new Point2D(startX, startY);
 
         double radians = Math.toRadians(angle);
 
         // calculate the distance in the x direction
-        double sine = Math.sin(radians);
+        double sine = Math.abs(Math.sin(radians));
         double newX = distance * sine + startX;
 
         double cosine = Math.cos(radians);
@@ -506,7 +514,7 @@ public class turtle {
         System.out.println("newX=" + newX + ", newY=" + newY + ", distance="
                 + euclidianDistance(startX, startY, newX, newY));
 
-        return new Point2D(newX, newY);
+        return new Point2D(newX, newY-HEIGHT/2);
     }
 
     /**
