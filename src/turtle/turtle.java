@@ -348,7 +348,8 @@ public class turtle {
     }
 
     public void forward(double distance) {
-
+        Point2D end = calculateEndPoint(angle, location, distance);
+        setPosition(end.getX(), end.getY());
     }
 
     public void bk(double distance) {
@@ -415,19 +416,40 @@ public class turtle {
         animator.addAnimation(animation);
     }
 
+    /**
+     * Moves the turtle to the specified x/y coordinate. If the pen is down,
+     * the turtle draws a line.
+     *
+     * @param x The turtle's new x coordinate.
+     * @param y The turtle's new y coordinate.
+     */
     public void goTo(double x, double y) {
         setPosition(x, y);
     }
 
+    /**
+     * Moves the turtle to the specified x/y coordinate. If the pen is down,
+     * the turtle draws a line.
+     *
+     * @param x The turtle's new x coordinate.
+     * @param y The turtle's new y coordinate.
+     */
     public void setPos(double x, double y) {
         setPosition(x, y);
     }
 
-    public void setPosition(double newX, double newY) {
+    /**
+     * Moves the turtle to the specified x/y coordinate. If the pen is down,
+     * the turtle draws a line.
+     *
+     * @param x The turtle's new x coordinate.
+     * @param y The turtle's new y coordinate.
+     */
+    public void setPosition(double x, double y) {
         display();
 
         Point2D start = translateToCoordinates(location);
-        location = new Point2D(newX, newY);
+        location = new Point2D(x, y);
         Point2D end = translateToCoordinates(location);
 
         Timeline animation = new Timeline();
@@ -458,14 +480,30 @@ public class turtle {
                 new KeyFrame(duration, keyValues));
 
         animator.addAnimation(animation);
+
+        turtleShape.toFront();
     }
 
-    public void setX(double newX) {
-        //setPosition(newX, HEIGHT / 2 - y);
+    /**
+     * Moves the turtle to the specified x coordinate. The turtle's y
+     * coordinate remains unchanged. If the pen is down, the turtle draws a
+     * line.
+     *
+     * @param x The turtle's new x coordinate.
+     */
+    public void setX(double x) {
+        setPosition(x, location.getY());
     }
 
-    public void setY(double newY) {
-        //setPosition(x - WIDTH / 2, newY);
+    /**
+     * Moves the turtle to the specified y coordinate. The turtle's x
+     * coordinate remains unchanged. If the pen is down, the turtle draws a
+     * line.
+     *
+     * @param y The turtle's new x coordinate.
+     */
+    public void setY(double y) {
+        setPosition(location.getX(), y);
     }
 
     /**
@@ -486,10 +524,35 @@ public class turtle {
         }
     }
 
+    /**
+     * The turtle uses a coordinate plane where the origin, (0,0) is in the
+     * center of the canvas the y is positive in the UP direction. JavaFX uses
+     * a coordinate plane where the origin, (0, 0), is in the top left corner
+     * of the screen and y is positive in the DOWN direction. Given a turtle
+     * coordinate as a {@link Point2D}, this method will translate it into a
+     * JavaFX coordinate.
+     *
+     * @param point The turtle coordinate as a {@link Point2D}.
+     *
+     * @return The translated coordinate as a{@link Point2D}.
+     */
     private Point2D translateToCoordinates(Point2D point) {
         return translateToCoordinates(point.getX(), point.getY());
     }
 
+    /**
+     * The turtle uses a coordinate plane where the origin, (0,0) is in the
+     * center of the canvas the y is positive in the UP direction. JavaFX uses
+     * a coordinate plane where the origin, (0, 0), is in the top left corner
+     * of the screen and y is positive in the DOWN direction. Given a turtle
+     * coordinate as an x/y pair, this method will translate it into a JavaFX
+     * coordinate.
+     *
+     * @param x The turtle's x coordinate.
+     * @param y The turtle's y coordinate.
+     *
+     * @return The translated coordinate as a {@link Point2D}.
+     */
     private Point2D translateToCoordinates(double x, double y) {
         double realX = x += WIDTH / 2;
         double realY = HEIGHT / 2 - y;
@@ -497,24 +560,22 @@ public class turtle {
         return new Point2D(realX, realY);
     }
 
-    private Point2D calculateEndPoint(double angle, double distance,
-                                      double startX, double startY) {
+    private Point2D calculateEndPoint(double angle, Point2D start,
+                                      double distance) {
 
-        Point2D start = new Point2D(startX, startY);
-
-        double radians = Math.toRadians(angle);
+        double radians = Math.toRadians(-angle);
 
         // calculate the distance in the x direction
-        double sine = Math.abs(Math.sin(radians));
-        double newX = distance * sine + startX;
+        double sine = Math.sin(radians);
+        double newX = distance * sine + start.getX();
 
         double cosine = Math.cos(radians);
-        double newY = distance * cosine + startY;
+        double newY = distance * cosine + start.getY();
 
         System.out.println("newX=" + newX + ", newY=" + newY + ", distance="
-                + euclidianDistance(startX, startY, newX, newY));
+                + euclidianDistance(start.getX(), start.getY(), newX, newY));
 
-        return new Point2D(newX, newY-HEIGHT/2);
+        return new Point2D(newX, newY);
     }
 
     /**
