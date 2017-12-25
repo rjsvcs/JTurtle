@@ -133,6 +133,11 @@ public class turtle {
     private Color fillColor;
 
     /**
+     * The width of the turtle's pen.
+     */
+    private int width;
+
+    /**
      * The speed at which the turtle moves.
      */
     private double speed;
@@ -156,6 +161,9 @@ public class turtle {
     private turtle() {
         // facing east
         angle = 0;
+
+        // default pen width
+        width = 1;
 
         //in the center of the canvas
         location = new Point2D(0, 0);
@@ -463,6 +471,7 @@ public class turtle {
         if(penDown) {
             Line line = new Line(start.getX(), start.getY(), start.getX(),
                     start.getY());
+            line.setStrokeWidth(width);
             line.setStroke(Color.TRANSPARENT);
 
             animation.getKeyFrames().add(new KeyFrame(Duration.ONE,
@@ -504,6 +513,14 @@ public class turtle {
      */
     public void setY(double y) {
         setPosition(location.getX(), y);
+    }
+
+    public void width(int width) {
+        penSize(width);
+    }
+
+    public void penSize(int width) {
+        this.width = width;
     }
 
     /**
