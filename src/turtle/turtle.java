@@ -525,6 +525,10 @@ public class turtle {
     }
 
     public void penSize(int width) {
+        if(width < 0) {
+            throw new IllegalArgumentException("Pen width must be positive: "
+                    + width);
+        }
         this.width = width;
     }
 
@@ -593,12 +597,6 @@ public class turtle {
 
         double cosine = Math.cos(radians);
         double newY = distance * cosine + start.getY();
-
-        System.out.println("angle=" + angle + ", oldX=" + start.getX() +
-                ", oldY=" + start.getY());
-        System.out.println("newX=" + newX + ", newY=" + newY + ", distance="
-                + euclidianDistance(start.getX(), start.getY(), newX, newY) +
-                "\n");
 
         return new Point2D(newX, newY);
     }
