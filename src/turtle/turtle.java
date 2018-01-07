@@ -6,7 +6,6 @@
  */
 package turtle;
 
-import com.sun.javafx.application.PlatformImpl;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -98,6 +97,11 @@ public class turtle {
      */
     private double angle;
 
+    /**
+     * The current location of the turtle as a {@link Point2D}. This is the
+     * location of the turtle in the turtle's world (with the origin (0,0)) in
+     * the center of the canvas.
+     */
     private Point2D location;
 
     /**
@@ -589,8 +593,11 @@ public class turtle {
         double cosine = Math.cos(radians);
         double newY = distance * cosine + start.getY();
 
+        System.out.println("angle=" + angle + ", oldX=" + start.getX() +
+                ", oldY=" + start.getY());
         System.out.println("newX=" + newX + ", newY=" + newY + ", distance="
                 + euclidianDistance(start.getX(), start.getY(), newX, newY));
+        System.out.println();
 
         return new Point2D(newX, newY);
     }
@@ -617,9 +624,6 @@ public class turtle {
             double pixels_per_second = speed != SPEED_FASTEST ?
                             PIXELS_PER_UNIT_OF_SPEED * speed : 1000;
             double seconds = distance / pixels_per_second;
-
-            System.out.println("distance=" + distance + ", speed=" + speed +
-                    ", pps=" + pixels_per_second + ", s=" + seconds);
 
             return Duration.millis(seconds * 1000.0);
         }
@@ -715,7 +719,7 @@ public class turtle {
     private void display() {
         if(notDisplayed) {
             // initialize the JavaFX platform
-            PlatformImpl.startup(() -> {
+            Platform.startup(() -> {
             });
             // launch the turtle application
             Platform.runLater(() -> {
