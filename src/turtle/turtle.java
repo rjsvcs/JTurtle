@@ -593,7 +593,7 @@ public class turtle {
      * @return The translated coordinate as a {@link Point2D}.
      */
     private Point2D translateToCoordinates(double x, double y) {
-        double realX = x += WIDTH / 2;
+        double realX = x + WIDTH / 2;
         double realY = HEIGHT / 2 - y;
 
         return new Point2D(realX, realY);
@@ -685,9 +685,9 @@ public class turtle {
     }
 
     /**
-     * Helper method that makes a new {@Color color} from the provided RGB
-     * values. The provided values must be compatible with the current color
-     * mode.
+     * Helper method that makes a new {@link Color color} from the provided
+     * RGB values. The provided values must be compatible with the current
+     * color mode.
      *
      * @param red The red value.
      * @param green The green value.
@@ -697,9 +697,9 @@ public class turtle {
      */
     private Color makeColor(double red, double green, double blue) {
         if(colorMode == COLOR_MODE_255) {
-            red = (double)red / 255;
-            green = (double)green / 255;
-            blue = (double)blue / 255;
+            red = red / 255.0;
+            green = green / 255.0;
+            blue = blue / 255.0;
         }
 
         if(red < 0 || red > 1 ||
@@ -713,8 +713,6 @@ public class turtle {
     }
 
     private Color makeColor(String color) {
-        String upperColor = color.toUpperCase();
-
         try {
             Field theColor = Color.class.getField(color.toUpperCase());
             return (Color)theColor.get(null);
@@ -724,6 +722,14 @@ public class turtle {
         }
     }
 
+    /**
+     * Calculates the Euclidian distance between two points.
+     * @param startX The x coordinate of the first point.
+     * @param startY The y coordinate of the first point.
+     * @param endX The x coordinate of the second point.
+     * @param endY The y coordinate of the second point.
+     * @return The distance between the two points.
+     */
     private double euclidianDistance(double startX, double startY,
                                      double endX, double endY) {
         Point2D start = new Point2D(startX, startY);
