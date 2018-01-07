@@ -373,7 +373,8 @@ public class turtle {
     }
 
     public void backward(double distance) {
-
+        Point2D end = calculateEndPoint(angle + 180, location, distance);
+        setPosition(end.getX(), end.getY());
     }
 
     /**
@@ -596,8 +597,8 @@ public class turtle {
         System.out.println("angle=" + angle + ", oldX=" + start.getX() +
                 ", oldY=" + start.getY());
         System.out.println("newX=" + newX + ", newY=" + newY + ", distance="
-                + euclidianDistance(start.getX(), start.getY(), newX, newY));
-        System.out.println();
+                + euclidianDistance(start.getX(), start.getY(), newX, newY) +
+                "\n");
 
         return new Point2D(newX, newY);
     }
