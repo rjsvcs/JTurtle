@@ -492,7 +492,6 @@ public class turtle {
 
         animation.getKeyFrames().add(
                 new KeyFrame(duration, keyValues));
-
         animator.addAnimation(animation);
 
         turtleShape.toFront();
@@ -550,6 +549,20 @@ public class turtle {
         }
     }
 
+//    public void circle(double radius) {
+//        int circumferance = (int)Math.ceil(Math.PI * radius * 2);
+//        double degrees = 360.0 / circumferance;
+//
+//        for(int i=0; i<circumferance; i++) {
+//            turtle.forward(1);
+//            turtle.left(degrees);
+//        }
+//    }
+
+    /////////////////////////////////////////////////////////////////////////
+    // PRIVATE METHODS. Most of these translate turtlish stuff to JavaFX.  //
+    /////////////////////////////////////////////////////////////////////////
+
     /**
      * The turtle uses a coordinate plane where the origin, (0,0) is in the
      * center of the canvas the y is positive in the UP direction. JavaFX uses
@@ -586,6 +599,15 @@ public class turtle {
         return new Point2D(realX, realY);
     }
 
+    /**
+     * Given an angle, a starting point, and a distance, calculates the end
+     * point that a turtle would arrive at.
+     *
+     * @param angle The angle of the turtle.
+     * @param start The starting point.
+     * @param distance The distance that the turtle should move.
+     * @return The end point.
+     */
     private Point2D calculateEndPoint(double angle, Point2D start,
                                       double distance) {
 
