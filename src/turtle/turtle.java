@@ -584,7 +584,7 @@ public class turtle {
     private Point2D calculateEndPoint(double angle, Point2D start,
                                       double distance) {
 
-        double radians = Math.toRadians(-angle);
+        double radians = Math.toRadians(angle + 90);
 
         // calculate the distance in the x direction
         double sine = Math.sin(radians);
