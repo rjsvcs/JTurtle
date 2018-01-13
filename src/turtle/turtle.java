@@ -443,10 +443,7 @@ public class turtle {
                 new KeyFrame(Duration.millis(duration),
                 new KeyValue(turtleShape.rotateProperty(), angle)));
         animation.setOnFinished(finisher);
-        animation.play();
-        waitForNotify();
-
-        //animator.addAnimation(animation);
+        animate(animation);
     }
 
     /**
@@ -464,15 +461,17 @@ public class turtle {
      * @param degrees The number of degrees to turn the turtle to the left.
      */
     public void left(double degrees) {
+        display();
+
         angle -= degrees;
 
         double duration = degrees / DEGREES_PER_SECOND * 1000;
 
-        display();
         Timeline animation = new Timeline(
                 new KeyFrame(Duration.millis(duration),
                 new KeyValue(turtleShape.rotateProperty(), angle)));
-        animator.addAnimation(animation);
+        animation.setOnFinished(finisher);
+        animate(animation);
     }
 
     /**
@@ -609,6 +608,20 @@ public class turtle {
     // PRIVATE METHODS. Most of these translate turtlish stuff to JavaFX.  //
     /////////////////////////////////////////////////////////////////////////
 
+    private synchronized void animate(Animation animation) {
+        // set the on finished handler to stop the turtle from blocking
+        animation.setOnFinished((e) -> {
+            synchronized(turtle.this) {
+                // this will wake the turtle from the wait state
+                turtle.notify();
+            }
+        });
+        // play the animation
+        animation.play();
+        // wait for notification that the animation is done
+        waitForNotify();
+    }
+
     private synchronized void waitForNotify() {
         try {
             wait();
@@ -616,14 +629,6 @@ public class turtle {
             // squash
         }
     }
-
-    private void runInApplicationThread(Runnable runner) {
-        synchronized(this) {
-            Platform.runLater(runner);
-            waitForNotify();
-        }
-    }
-
 
     /**
      * The turtle uses a coordinate plane where the origin, (0,0) is in the
