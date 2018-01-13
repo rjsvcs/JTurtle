@@ -611,6 +611,18 @@ public class turtle {
         }
     }
 
+    /**
+     * Sets the world coordinates for the turtle's world.
+     *
+     * @param llx The x coordinate for the lower left corner of the world.
+     * @param lly The y coordinate for the lower left corner of the world.
+     * @param urx The x coordinate for the upper right corner of the world.
+     * @param ury The y coordinate for the upper right corner of the world.
+     */
+    public void setWorldCoordinates(int llx, int lly, int urx, int ury) {
+        // does nothing...yet
+    }
+
     /////////////////////////////////////////////////////////////////////////
     // PRIVATE METHODS. Most of these translate turtlish stuff to JavaFX.  //
     /////////////////////////////////////////////////////////////////////////
@@ -905,11 +917,20 @@ public class turtle {
          */
         private String title;
 
+        /**
+         * Constructs the app.
+         */
         TurtleApp() {
             // default title
             title = "JTurtle!";
         }
 
+        /**
+         * Starts the application.
+         *
+         * @param primaryStage The {@link Stage} on which the turtle will
+         *                     draw.
+         */
         @Override
         public void start(Stage primaryStage) {
             Scene scene = new Scene(turtle.root, WIDTH, HEIGHT,
