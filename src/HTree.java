@@ -45,7 +45,7 @@ public class HTree {
     }
 
     public static void main(String[] args) {
-        int length = 100;
+        int length = 200;
         int depth = 3;
 
         init(length, depth);

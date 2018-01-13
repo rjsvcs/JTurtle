@@ -12,8 +12,6 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -23,8 +21,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.lang.reflect.Field;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * A JavaFX implementation of Turtle Graphics.
@@ -506,9 +502,8 @@ public class turtle {
             animation.getKeyFrames().add(new KeyFrame(Duration.ONE,
                     new KeyValue(line.strokeProperty(), penColor)));
 
-            runInApplicationThread(() -> {
-                root.getChildren().add(line);
-            });
+            runInApplicationThread(() -> root.getChildren().add(line));
+
             keyValues[2] = new KeyValue(line.endXProperty(), end.getX());
             keyValues[3] = new KeyValue(line.endYProperty(), end.getY());
         }
@@ -521,9 +516,7 @@ public class turtle {
         //animator.addAnimation(animation);
         animate(animation);
 
-        runInApplicationThread(() -> {
-            turtleShape.toFront();
-        });
+        runInApplicationThread(() ->  turtleShape.toFront());
     }
 
     /**
@@ -743,9 +736,7 @@ public class turtle {
         double cosine = Math.cos(radians);
         double newY = distance * cosine + start.getY();
 
-        Point2D end = new Point2D(newX, newY);
-
-        return end;
+        return new Point2D(newX, newY);
     }
 
     /**
