@@ -601,6 +601,8 @@ public class turtle {
      * @param radius The radius of the circle to draw.
      */
     public void circle(double radius) {
+        display();
+
         int circumference = (int)Math.ceil(Math.PI * radius * 2);
         double degrees = 360.0 / circumference;
 
