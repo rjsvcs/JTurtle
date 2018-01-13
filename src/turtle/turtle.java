@@ -80,7 +80,7 @@ public class turtle {
     /**
      * The default speed at which the turtle turns in degrees per second.
      */
-    private static final double DEGREES_PER_SECOND = 360;
+    private static final double DEGREES_PER_SECOND = 90;
 
     /**
      * The static (singleton) turtle.
@@ -160,6 +160,16 @@ public class turtle {
     private boolean notDisplayed;
 
     /**
+     * The JavaFX application in which the turtle runs.
+     */
+    private TurtleApp application;
+
+    /**
+     * The handler that notifies the turtle as each animation finishes.
+     */
+    private OnFinishedHandler finisher;
+
+    /**
      * Initializes the turtle with its default settings.
      */
     private turtle() {
@@ -209,6 +219,10 @@ public class turtle {
 
         // by default the turtle;s world is not displayed.
         notDisplayed = true;
+
+        // the event handler that stops the turtle from blocking as animations
+        // complete.
+        finisher = new OnFinishedHandler();
     }
 
     /**
@@ -258,10 +272,16 @@ public class turtle {
         return colorMode;
     }
 
+    /**
+     * @see #penColor(String).
+     */
     public void color(String color) {
         turtle.penColor(color);
     }
 
+    /**
+     * @see #penColor(double, double, double)
+     */
     public void color(double red, double green, double blue) {
         turtle.penColor(red, green, blue);
     }
@@ -355,24 +375,44 @@ public class turtle {
     }
 
 
+    /**
+     * @see #forward(double)
+     */
     public void fd(double distance) {
         forward(distance);
     }
 
+    /**
+     * Moves the turtle the specified distance in the direction that it is
+     * currently facing.
+     *
+     * @param distance The distance to move the turtle.
+     */
     public void forward(double distance) {
         Point2D end = calculateEndPoint(angle, location, distance);
 
         setPosition(end.getX(), end.getY());
     }
 
+    /**
+     * @see #backward(double)
+     */
     public void bk(double distance) {
         backward(distance);
     }
 
+    /**
+     * @see #backward(double)
+     */
     public void back(double distance) {
         backward(distance);
     }
 
+    /**
+     * Moves the turtle backwards the specified distance.
+     *
+     * @param distance This distance to move the turtle backwards.
+     */
     public void backward(double distance) {
         Point2D end = calculateEndPoint(angle + 180, location, distance);
         setPosition(end.getX(), end.getY());
@@ -392,16 +432,21 @@ public class turtle {
      *
      * @param degrees The number of degrees to turn the turtle to the right.
      */
-    public void right(double degrees) {
+    public synchronized void right(double degrees) {
+        display();
+
         angle += degrees;
 
         double duration = degrees / DEGREES_PER_SECOND * 1000;
 
-        display();
         Timeline animation = new Timeline(
                 new KeyFrame(Duration.millis(duration),
                 new KeyValue(turtleShape.rotateProperty(), angle)));
-        animator.addAnimation(animation);
+        animation.setOnFinished(finisher);
+        animation.play();
+        waitForNotify();
+
+        //animator.addAnimation(animation);
     }
 
     /**
@@ -563,6 +608,22 @@ public class turtle {
     /////////////////////////////////////////////////////////////////////////
     // PRIVATE METHODS. Most of these translate turtlish stuff to JavaFX.  //
     /////////////////////////////////////////////////////////////////////////
+
+    private synchronized void waitForNotify() {
+        try {
+            wait();
+        } catch (InterruptedException e) {
+            // squash
+        }
+    }
+
+    private void runInApplicationThread(Runnable runner) {
+        synchronized(this) {
+            Platform.runLater(runner);
+            waitForNotify();
+        }
+    }
+
 
     /**
      * The turtle uses a coordinate plane where the origin, (0,0) is in the
@@ -750,22 +811,54 @@ public class turtle {
     /**
      * If the JavaFX turtle application is not yet displayed, this method will
      * display it. It is called automatically from any method that moves the
-     * turtle.
+     * turtle. This method blocks until the application has started.
      */
-    private void display() {
+    private synchronized void display() {
         if(notDisplayed) {
             // initialize the JavaFX platform
             Platform.startup(() -> {
+                synchronized(turtle.this) {
+                    turtle.this.notify();
+                }
             });
+            // wait for the platform to startup
+            waitForNotify();
+
             // launch the turtle application
             Platform.runLater(() -> {
                 try {
-                    new TurtleApp().start(new Stage());
+                    application = new TurtleApp();
+                    application.start(new Stage());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    // squash
+                }
+                synchronized(turtle.this) {
+                    turtle.this.notify();
                 }
             });
+            // wait for the application to start up
+            waitForNotify();
             notDisplayed = false;
+        }
+    }
+
+    /**
+     * An {@link EventHandler} that notifies the turtle when an animation is
+     * complete.
+     */
+    private class OnFinishedHandler implements EventHandler<ActionEvent> {
+        /**
+         * Called when an {@link Animation} is complete. Used to notify the
+         * turtle so that it stops blocking.
+         *
+         * @param event The event indicating that the {@link Animation} is
+         *              complete.
+         */
+        @Override
+        public void handle(ActionEvent event) {
+            synchronized (turtle.this) {
+                turtle.this.notify();
+            }
         }
     }
 
