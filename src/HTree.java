@@ -3,7 +3,7 @@ import static turtle.turtle.*;
 public class HTree {
 
     public static void init(int length, int depth) {
-
+        turtle.title("H-Tree, depth: " + depth);
     }
 
     public static void drawHTree(double length, int depth) {
@@ -45,7 +45,10 @@ public class HTree {
     }
 
     public static void main(String[] args) {
-        turtle.speed(10);
-        drawHTree(100, 3);
+        int length = 100;
+        int depth = 3;
+
+        init(length, depth);
+        drawHTree(length, depth);
     }
 }

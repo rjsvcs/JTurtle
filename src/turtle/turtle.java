@@ -201,6 +201,9 @@ public class turtle {
 
         // by default the turtle;s world is not displayed.
         notDisplayed = true;
+
+        // init the application
+        application = new TurtleApp();
     }
 
     /**
@@ -584,6 +587,15 @@ public class turtle {
     }
 
     /**
+     * Sets the title displayed in the turtle's window.
+     *
+     * @param title The new title.
+     */
+    public void title(String title) {
+        application.setTitle(title);
+    }
+
+    /**
      * Draws a circle with the specified radius.
      *
      * @param radius The radius of the circle to draw.
@@ -865,7 +877,6 @@ public class turtle {
             // launch the turtle application
             Platform.runLater(() -> {
                 try {
-                    application = new TurtleApp();
                     application.start(new Stage());
                 } catch (Exception e) {
                     // squash
@@ -884,16 +895,45 @@ public class turtle {
      * The turtle application. Displays the turtle's world in a JavaFX window.
      */
     private static class TurtleApp extends Application {
+        /**
+         * The main {@link Stage} for the application.
+         */
+        private Stage stage;
+
+        /**
+         * The title of the application.
+         */
+        private String title;
+
+        TurtleApp() {
+            // default title
+            title = "JTurtle!";
+        }
 
         @Override
         public void start(Stage primaryStage) {
             Scene scene = new Scene(turtle.root, WIDTH, HEIGHT,
                     Color.WHITE);
 
-            primaryStage.setTitle("JTurtle!");
-            primaryStage.setScene(scene);
-            primaryStage.sizeToScene();
-            primaryStage.show();
+            stage = primaryStage;
+
+            stage.setTitle(title);
+            stage.setScene(scene);
+            stage.sizeToScene();
+            stage.show();
+        }
+
+        /**
+         * Updates the title used by the primary stage.
+         *
+         * @param title The new title for the stage.
+         */
+        public void setTitle(String title) {
+            this.title = title;
+
+            if(stage != null) {
+                stage.setTitle(title);
+            }
         }
     }
 }
