@@ -80,7 +80,7 @@ public class turtle {
     /**
      * The default speed at which the turtle turns in degrees per second.
      */
-    private static final double DEGREES_PER_SECOND = 180;
+    private static final double DEGREES_PER_SECOND = 360;
 
     /**
      * The static (singleton) turtle.
@@ -361,6 +361,7 @@ public class turtle {
 
     public void forward(double distance) {
         Point2D end = calculateEndPoint(angle, location, distance);
+
         setPosition(end.getX(), end.getY());
     }
 
@@ -620,7 +621,15 @@ public class turtle {
         double cosine = Math.cos(radians);
         double newY = distance * cosine + start.getY();
 
-        return new Point2D(newX, newY);
+        Point2D end = new Point2D(newX, newY);
+
+        System.out.println("Calculating end point...");
+        System.out.println("  distance: " + distance);
+        System.out.println("  angle: " + angle);
+        System.out.println("  start: " + start);
+        System.out.println("  end: " + end);
+
+        return end;
     }
 
     /**
