@@ -159,11 +159,6 @@ public class turtle {
     private TurtleApp application;
 
     /**
-     * The handler that notifies the turtle as each animation finishes.
-     */
-    private OnFinishedHandler finisher;
-
-    /**
      * Initializes the turtle with its default settings.
      */
     private turtle() {
@@ -206,10 +201,6 @@ public class turtle {
 
         // by default the turtle;s world is not displayed.
         notDisplayed = true;
-
-        // the event handler that stops the turtle from blocking as animations
-        // complete.
-        finisher = new OnFinishedHandler();
     }
 
     /**
@@ -429,7 +420,6 @@ public class turtle {
         Timeline animation = new Timeline(
                 new KeyFrame(Duration.millis(duration),
                 new KeyValue(turtleShape.rotateProperty(), angle)));
-        animation.setOnFinished(finisher);
         animate(animation);
     }
 
@@ -457,7 +447,6 @@ public class turtle {
         Timeline animation = new Timeline(
                 new KeyFrame(Duration.millis(duration),
                 new KeyValue(turtleShape.rotateProperty(), angle)));
-        animation.setOnFinished(finisher);
         animate(animation);
     }
 
@@ -556,10 +545,18 @@ public class turtle {
         setPosition(location.getX(), y);
     }
 
+    /**
+     * @see #penSize(int)
+     */
     public void width(int width) {
         penSize(width);
     }
 
+    /**
+     * Sets the width of the pen to the specified value.
+     *
+     * @param width The width of the pen. Must be a positive number.
+     */
     public void penSize(int width) {
         if(width < 0) {
             throw new IllegalArgumentException("Pen width must be positive: "
@@ -586,11 +583,17 @@ public class turtle {
         }
     }
 
+    /**
+     * Draws a circle with the specified radius.
+     *
+     * @param radius The radius of the circle to draw.
+     */
     public void circle(double radius) {
-        int circumferance = (int)Math.ceil(Math.PI * radius * 2);
-        double degrees = 360.0 / circumferance;
+        int circumference = (int)Math.ceil(Math.PI * radius * 2);
+        double degrees = 360.0 / circumference;
 
-        for(int i=0; i<circumferance; i++) {
+        // this is currently very slow. but it works!
+        for(int i=0; i<circumference; i++) {
             turtle.forward(1);
             turtle.left(degrees);
         }
@@ -808,6 +811,15 @@ public class turtle {
         return new Color(red, green, blue, 1.0);
     }
 
+    /**
+     * Makes a {@link Color} from the specified string. Throws an illegal
+     * argument exception of there is not a color constant in the
+     * {@link Color} class with the specified name.
+     *
+     * @param color The name of the color.
+     *
+     * @return The corresponding {@link Color}.
+     */
     private Color makeColor(String color) {
         try {
             Field theColor = Color.class.getField(color.toUpperCase());
@@ -865,26 +877,6 @@ public class turtle {
             // wait for the application to start up
             waitForNotify();
             notDisplayed = false;
-        }
-    }
-
-    /**
-     * An {@link EventHandler} that notifies the turtle when an animation is
-     * complete.
-     */
-    private class OnFinishedHandler implements EventHandler<ActionEvent> {
-        /**
-         * Called when an {@link Animation} is complete. Used to notify the
-         * turtle so that it stops blocking.
-         *
-         * @param event The event indicating that the {@link Animation} is
-         *              complete.
-         */
-        @Override
-        public void handle(ActionEvent event) {
-            synchronized (turtle.this) {
-                turtle.this.notify();
-            }
         }
     }
 
