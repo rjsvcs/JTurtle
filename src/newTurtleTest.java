@@ -7,5 +7,7 @@ public class newTurtleTest {
         System.out.println("left done, right...");
         turtle.right(360);
         System.out.println("done");
+
+        turtle.setPosition(50, 50);
     }
 }

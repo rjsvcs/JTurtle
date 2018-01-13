@@ -80,7 +80,7 @@ public class turtle {
     /**
      * The default speed at which the turtle turns in degrees per second.
      */
-    private static final double DEGREES_PER_SECOND = 90;
+    private static final double DEGREES_PER_SECOND = 360;
 
     /**
      * The static (singleton) turtle.
@@ -527,7 +527,9 @@ public class turtle {
             animation.getKeyFrames().add(new KeyFrame(Duration.ONE,
                     new KeyValue(line.strokeProperty(), penColor)));
 
-            root.getChildren().add(line);
+            runInApplicationThread(() -> {
+                root.getChildren().add(line);
+            });
             keyValues[2] = new KeyValue(line.endXProperty(), end.getX());
             keyValues[3] = new KeyValue(line.endYProperty(), end.getY());
         }
@@ -537,9 +539,12 @@ public class turtle {
 
         animation.getKeyFrames().add(
                 new KeyFrame(duration, keyValues));
-        animator.addAnimation(animation);
+        //animator.addAnimation(animation);
+        animate(animation);
 
-        turtleShape.toFront();
+        runInApplicationThread(() -> {
+            turtleShape.toFront();
+        });
     }
 
     /**
@@ -607,7 +612,14 @@ public class turtle {
     /////////////////////////////////////////////////////////////////////////
     // PRIVATE METHODS. Most of these translate turtlish stuff to JavaFX.  //
     /////////////////////////////////////////////////////////////////////////
-
+    /**
+     * Performs the specified animation. First sets the on finished handler
+     * to notify the turtle when the animation is complete. Then starts the
+     * animation. Finally, waits for notification that the animation is
+     * complete.
+     *
+     * @param animation The animation to execute.
+     */
     private synchronized void animate(Animation animation) {
         // set the on finished handler to stop the turtle from blocking
         animation.setOnFinished((e) -> {
@@ -622,12 +634,40 @@ public class turtle {
         waitForNotify();
     }
 
+    /**
+     * Helper method the sole purpose of which is to avoid clogging the code
+     * throughout the class with try { wait() } catch(InterruptedException){}
+     * blocks whenever a wait is needed.
+     */
     private synchronized void waitForNotify() {
         try {
             wait();
         } catch (InterruptedException e) {
             // squash
         }
+    }
+
+    /**
+     * Runs the specified {@link Runnable} in the JavaFX application thread,
+     * which is the only thread in which modifications to the user interface
+     * can be performed directly. Blocks until the runner is finished.
+     *
+     * @param runner The {@link Runnable} to execute in the JavaFX application
+     *               thread.
+     */
+    private synchronized void runInApplicationThread(Runnable runner) {
+        // wrap the runner in another runnable that...
+        Platform.runLater(() -> {
+            // obtains the synchronization lock...
+            synchronized(turtle.this) {
+                // starts the runner
+                runner.run();
+                // once it is complete, notifies the waiting turtle
+                turtle.this.notify();
+            }
+        });
+        // wait for notification
+        waitForNotify();
     }
 
     /**
