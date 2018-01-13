@@ -110,12 +110,6 @@ public class turtle {
     private Group root;
 
     /**
-     * Helper {@link Thread} that insures that animations are completed one at
-     * a time, in order.
-     */
-    private Animator animator;
-
-    /**
      * The current state of the pen; true if the pen is down.
      */
     private boolean penDown;
@@ -209,13 +203,6 @@ public class turtle {
 
         // the tracer is enabled by default
         tracer = true;
-
-        // the animator is a producer/consumer thread that insures that
-        // animations are executed in order.
-        animator = new Animator();
-        Thread animationThread = new Thread(animator);
-        animationThread.setDaemon(true);
-        animationThread.start();
 
         // by default the turtle;s world is not displayed.
         notDisplayed = true;
@@ -599,15 +586,15 @@ public class turtle {
         }
     }
 
-//    public void circle(double radius) {
-//        int circumferance = (int)Math.ceil(Math.PI * radius * 2);
-//        double degrees = 360.0 / circumferance;
-//
-//        for(int i=0; i<circumferance; i++) {
-//            turtle.forward(1);
-//            turtle.left(degrees);
-//        }
-//    }
+    public void circle(double radius) {
+        int circumferance = (int)Math.ceil(Math.PI * radius * 2);
+        double degrees = 360.0 / circumferance;
+
+        for(int i=0; i<circumferance; i++) {
+            turtle.forward(1);
+            turtle.left(degrees);
+        }
+    }
 
     /////////////////////////////////////////////////////////////////////////
     // PRIVATE METHODS. Most of these translate turtlish stuff to JavaFX.  //
@@ -729,12 +716,6 @@ public class turtle {
 
         Point2D end = new Point2D(newX, newY);
 
-        System.out.println("Calculating end point...");
-        System.out.println("  distance: " + distance);
-        System.out.println("  angle: " + angle);
-        System.out.println("  start: " + start);
-        System.out.println("  end: " + end);
-
         return end;
     }
 
@@ -781,7 +762,7 @@ public class turtle {
 
         Timeline animation = new Timeline(new KeyFrame(Duration.ONE,
                 new KeyValue(turtleShape.strokeProperty(), color)));
-        animator.addAnimation(animation);
+        animate(animation);
     }
 
     /**
@@ -796,7 +777,7 @@ public class turtle {
 
         Timeline animation = new Timeline(new KeyFrame(Duration.ONE,
                 new KeyValue(turtleShape.fillProperty(), color)));
-        animator.addAnimation(animation);
+        animate(animation);
     }
 
     /**
@@ -921,96 +902,6 @@ public class turtle {
             primaryStage.setScene(scene);
             primaryStage.sizeToScene();
             primaryStage.show();
-        }
-    }
-
-    /**
-     * A helper {@link Thread} that implements the producer/consumer design
-     * pattern to insure that each turtle command/animation is executed in
-     * turn.
-     */
-    private static class Animator implements Runnable,
-            EventHandler<ActionEvent> {
-
-        /**
-         * The queue of {@link Animation animations} that need to be consumed.
-         */
-        private final List<Animation> queue;
-
-        /**
-         * Indicates whether or not the most recent animation has yet
-         * finished.
-         */
-        private boolean finished;
-
-        /**
-         * Used to determine when the animator should terminate (e.g. upon an
-         * exception).
-         */
-        private boolean running;
-
-        Animator() {
-            queue = new LinkedList<>();
-            finished = true;
-            running = true;
-        }
-
-        @Override
-        public void run() {
-            synchronized(queue) {
-                while(running) {
-                    // if the most recent animation has finished and there is
-                    // at least one more animation to animate...
-                    if(finished && queue.size() > 0) {
-                        // indicate that the animation that is about to start
-                        // is not finished...
-                        finished = false;
-                        // get the next animation
-                        Animation next = queue.remove(0);
-                        // add the animator as the on finish handler...
-                        next.setOnFinished(this);
-                        // and start the animation
-                        next.play();
-                    }
-
-                    // wait for the next animation to be queued.
-                    try {
-                        queue.wait();
-                    }
-                    catch (InterruptedException e) {
-                        // terminate on exception
-                        running = false;
-                    }
-                }
-            }
-        }
-
-        /**
-         * Called when each animation finishes so that the next animation can
-         * be started (if there is one in the queue).
-         *
-         * @param event The event indicating that an animation has completed.
-         */
-        @Override
-        public void handle(ActionEvent event) {
-            synchronized(queue) {
-                finished = true;
-                queue.notify();
-            }
-        }
-
-        /**
-         * Adds the specified {@link Animation} to the queue of
-         * {@link Animation animations} to be performed.
-         *
-         * @param animation The {@link Animation} to add to the queue of
-         * {@link Animation animations} to be performed.
-         */
-        private void addAnimation(Animation animation) {
-            synchronized(queue) {
-                queue.add(animation);
-                queue.notify();
-            }
         }
     }
 }
