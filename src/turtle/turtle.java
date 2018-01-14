@@ -581,6 +581,7 @@ public class turtle {
      */
     public void title(String title) {
         application.setTitle(title);
+        display();
     }
 
     /**
@@ -610,6 +611,7 @@ public class turtle {
      * @param ury The y coordinate for the upper right corner of the world.
      */
     public void setWorldCoordinates(int llx, int lly, int urx, int ury) {
+        display();
         // does nothing...yet
     }
 
