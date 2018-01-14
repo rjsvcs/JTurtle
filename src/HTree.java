@@ -49,6 +49,7 @@ public class HTree {
         int depth = 3;
 
         init(length, depth);
+        turtle.speed(0);
         drawHTree(length, depth);
     }
 }

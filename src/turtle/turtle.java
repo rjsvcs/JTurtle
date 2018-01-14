@@ -71,12 +71,12 @@ public class turtle {
     /**
      * Default speed in pixels per second.
      */
-    private static final double PIXELS_PER_UNIT_OF_SPEED = 100;
+    private static final double PIXELS_PER_UNIT_OF_SPEED = 200;
 
     /**
      * The default speed at which the turtle turns in degrees per second.
      */
-    private static final double DEGREES_PER_SECOND = 360;
+    private static final double DEGREES_PER_UNIT_0F_SPEED = 90;
 
     /**
      * The static (singleton) turtle.
@@ -414,10 +414,8 @@ public class turtle {
 
         angle += degrees;
 
-        double duration = degrees / DEGREES_PER_SECOND * 1000;
-
         Timeline animation = new Timeline(
-                new KeyFrame(Duration.millis(duration),
+                new KeyFrame(getDuration(degrees),
                 new KeyValue(turtleShape.rotateProperty(), angle)));
         animate(animation);
     }
@@ -441,10 +439,8 @@ public class turtle {
 
         angle -= degrees;
 
-        double duration = degrees / DEGREES_PER_SECOND * 1000;
-
         Timeline animation = new Timeline(
-                new KeyFrame(Duration.millis(duration),
+                new KeyFrame(getDuration(degrees),
                 new KeyValue(turtleShape.rotateProperty(), angle)));
         animate(animation);
     }
@@ -513,7 +509,6 @@ public class turtle {
 
         animation.getKeyFrames().add(
                 new KeyFrame(duration, keyValues));
-        //animator.addAnimation(animation);
         animate(animation);
 
         runInApplicationThread(() ->  turtleShape.toFront());
@@ -753,13 +748,13 @@ public class turtle {
     private Duration getDuration(double startX, double startY,
                                double endX, double endY) {
         // if the tracer is enabled, the duration is calculated...
-        if(tracer && speed != SPEED_FASTEST) {
+        if(tracer) {
             // calculate the distance
             double distance = euclidianDistance(startX, startY, endX, endY);
             // calculate the number of pixels that the turtle should travel
             // per second
-            double pixels_per_second = speed != SPEED_FASTEST ?
-                            PIXELS_PER_UNIT_OF_SPEED * speed : 1000;
+            double pixels_per_second = PIXELS_PER_UNIT_OF_SPEED *
+                    getRealSpeed();
             double seconds = distance / pixels_per_second;
 
             return Duration.millis(seconds * 1000.0);
@@ -768,6 +763,23 @@ public class turtle {
             // if the tracer is disabled, the speed is instantaneous (1 ms).
             return Duration.ONE;
         }
+    }
+
+    private Duration getDuration(double degrees) {
+        if(tracer) {
+            double degrees_per_second = DEGREES_PER_UNIT_0F_SPEED *
+                    getRealSpeed();
+            double seconds = degrees / degrees_per_second;
+
+            return Duration.millis(seconds * 1000);
+        }
+        else {
+            return Duration.ONE;
+        }
+    }
+
+    private double getRealSpeed() {
+        return speed == SPEED_FASTEST ? 1000 : speed;
     }
 
     /**
