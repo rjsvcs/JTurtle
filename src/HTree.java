@@ -46,11 +46,10 @@ public class HTree {
 
     public static void main(String[] args) {
         int length = 200;
-        int depth = 0;
+        int depth = 3;
 
         init(length, depth);
         turtle.speed(0);
-        turtle.left(360);
         drawHTree(length, depth);
     }
 }

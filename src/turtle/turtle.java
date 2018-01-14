@@ -250,14 +250,23 @@ public class turtle {
     }
 
     /**
-     * @see #penColor(String).
+     * Sets the pen's color to the color matching the specified string.
+     *
+     * @param color The name of the color to which the pen color should be
+     *              set. Must be a valid color from the colors defined in the
+     *              {@link Color} class.
      */
     public void color(String color) {
         turtle.penColor(color);
     }
 
     /**
-     * @see #penColor(double, double, double)
+     * Sets the pen's color to the specified RGB values using decimal values
+     * based on the current color mode.
+     *
+     * @param red The value for the red channel.
+     * @param green The value for the green channel.
+     * @param blue The value for the red channel.
      */
     public void color(double red, double green, double blue) {
         turtle.penColor(red, green, blue);
@@ -353,7 +362,10 @@ public class turtle {
 
 
     /**
-     * @see #forward(double)
+     * Moves the turtle the specified distance in the direction that it is
+     * currently facing.
+     *
+     * @param distance The distance to move the turtle.
      */
     public void fd(double distance) {
         forward(distance);
@@ -372,14 +384,18 @@ public class turtle {
     }
 
     /**
-     * @see #backward(double)
+     * Moves the turtle backwards the specified distance.
+     *
+     * @param distance This distance to move the turtle backwards.
      */
     public void bk(double distance) {
         backward(distance);
     }
 
     /**
-     * @see #backward(double)
+     * Moves the turtle backwards the specified distance.
+     *
+     * @param distance This distance to move the turtle backwards.
      */
     public void back(double distance) {
         backward(distance);
@@ -537,7 +553,9 @@ public class turtle {
     }
 
     /**
-     * @see #penSize(int)
+     * Sets the width of the pen to the specified value.
+     *
+     * @param width The width of the pen. Must be a positive number.
      */
     public void width(int width) {
         penSize(width);
@@ -767,6 +785,14 @@ public class turtle {
         }
     }
 
+    /**
+     * Given a number of degrees, returns the approriate duration
+     * of the animation given the current speed and tracer settings.
+     *
+     * @param degrees The number of degrees that the turtle is to turn.
+     *
+     * @return The {@link Duration} that the animation should require.
+     */
     private Duration getDuration(double degrees) {
         if(tracer) {
             double degrees_per_second = DEGREES_PER_UNIT_0F_SPEED *
@@ -780,6 +806,13 @@ public class turtle {
         }
     }
 
+    /**
+     * Translates returns a real speed representing the turtle's current
+     * speed. For values 1 to 10, simple returns the speed. For 0, returns an
+     * appropriately, ridiculously fast speed.
+     *
+     * @return The speed of the turtle based on the current speed setting.
+     */
     private double getRealSpeed() {
         return speed == SPEED_FASTEST ? 1000 : speed;
     }
