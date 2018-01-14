@@ -61,12 +61,12 @@ public class turtle {
     /**
      * The default width of the turtle's world in pixels.
      */
-    private static final double WIDTH = 700;
+    private static final double WIDTH = 800;
 
     /**
      * The default height of the turtle's world.
      */
-    private static final double HEIGHT = 700;
+    private static final double HEIGHT = 800;
 
     /**
      * Default speed in pixels per second.
