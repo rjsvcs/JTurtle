@@ -257,7 +257,7 @@ public class Turtle {
      *              {@link Color} class.
      */
     public void color(String color) {
-        Turtle.penColor(color);
+        penColor(color);
     }
 
     /**
@@ -269,7 +269,7 @@ public class Turtle {
      * @param blue The value for the red channel.
      */
     public void color(double red, double green, double blue) {
-        Turtle.penColor(red, green, blue);
+        penColor(red, green, blue);
     }
 
     /**
@@ -617,7 +617,7 @@ public class Turtle {
 
         // this is currently very slow. but it works!
         for(int i=0; i<circumference; i++) {
-            Turtle.forward(1);
+            forward(1);
             Turtle.left(degrees);
         }
     }
@@ -651,7 +651,7 @@ public class Turtle {
         animation.setOnFinished((e) -> {
             synchronized(Turtle.this) {
                 // this will wake the Turtle from the wait state
-                Turtle.notify();
+                Turtle.this.notify();
             }
         });
         // play the animation
