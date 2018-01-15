@@ -25,7 +25,7 @@ import java.lang.reflect.Field;
 /**
  * A JavaFX implementation of Turtle Graphics.
  */
-public class turtle {
+public class Turtle {
     /**
      * The color mode used if RGB values should be specified as numbers
      * between 0.0 and 1.0. This is the default color mode.
@@ -39,32 +39,32 @@ public class turtle {
     public static final double COLOR_MODE_255 = 255.0;
 
     /**
-     * The slowest configurable speed for the turtle (1).
+     * The slowest configurable speed for the Turtle (1).
      */
     public static final int SPEED_SLOWEST = 1;
 
     /**
-     * The default speed for the turtle (5).
+     * The default speed for the Turtle (5).
      */
     public static final int SPEED_DEFAULT = 5;
 
     /**
-     * A fast speed for the turtle (10).
+     * A fast speed for the Turtle (10).
      */
     public static final int SPEED_FAST = 10;
 
     /**
-     * The fastest speed for the turtle (0).
+     * The fastest speed for the Turtle (0).
      */
     public static final int SPEED_FASTEST = 0;
 
     /**
-     * The default width of the turtle's world in pixels.
+     * The default width of the Turtle's world in pixels.
      */
     private static final double WIDTH = 800;
 
     /**
-     * The default height of the turtle's world.
+     * The default height of the Turtle's world.
      */
     private static final double HEIGHT = 800;
 
@@ -74,28 +74,28 @@ public class turtle {
     private static final double PIXELS_PER_UNIT_OF_SPEED = 200;
 
     /**
-     * The default speed at which the turtle turns in degrees per second.
+     * The default speed at which the Turtle turns in degrees per second.
      */
     private static final double DEGREES_PER_UNIT_0F_SPEED = 90;
 
     /**
-     * The static (singleton) turtle.
+     * The static (singleton) Turtle.
      */
-    public static final turtle turtle = new turtle();
+    public static final Turtle Turtle = new Turtle();
 
     /**
-     * The polygon that represents the turtle's arrowhead.
+     * The polygon that represents the Turtle's arrowhead.
      */
     private Shape turtleShape;
 
     /**
-     * The angle that the turtle is currently facing.
+     * The angle that the Turtle is currently facing.
      */
     private double angle;
 
     /**
-     * The current location of the turtle as a {@link Point2D}. This is the
-     * location of the turtle in the turtle's world (with the origin (0,0)) in
+     * The current location of the Turtle as a {@link Point2D}. This is the
+     * location of the Turtle in the Turtle's world (with the origin (0,0)) in
      * the center of the canvas.
      */
     private Point2D location;
@@ -117,47 +117,47 @@ public class turtle {
     private double colorMode;
 
     /**
-     * The color used for the turtle's pen.
+     * The color used for the Turtle's pen.
      */
     private Color penColor;
 
     /**
-     * The color used for the turtle's fills.
+     * The color used for the Turtle's fills.
      */
     private Color fillColor;
 
     /**
-     * The width of the turtle's pen.
+     * The width of the Turtle's pen.
      */
     private int width;
 
     /**
-     * The speed at which the turtle moves.
+     * The speed at which the Turtle moves.
      */
     private double speed;
 
     /**
-     * Indicates whether or not the tracer is enabled; if true, the turtle
-     * draws at its configured speed. If disabled, the turtle draws nearly
+     * Indicates whether or not the tracer is enabled; if true, the Turtle
+     * draws at its configured speed. If disabled, the Turtle draws nearly
      * instantaneously.
      */
     private boolean tracer;
 
     /**
-     * The current visibility of the turtle's world; false if the turtle's
+     * The current visibility of the Turtle's world; false if the Turtle's
      * world is not currently being displayed.
      */
     private boolean notDisplayed;
 
     /**
-     * The JavaFX application in which the turtle runs.
+     * The JavaFX application in which the Turtle runs.
      */
     private TurtleApp application;
 
     /**
-     * Initializes the turtle with its default settings.
+     * Initializes the Turtle with its default settings.
      */
-    private turtle() {
+    private Turtle() {
         // facing east
         angle = 0;
 
@@ -179,14 +179,14 @@ public class turtle {
 
         speed = SPEED_DEFAULT;
 
-        // initialize the turtle to be an arrow head.
+        // initialize the Turtle to be an arrow head.
         turtleShape = new Polygon(0, 0, -3.75, -5, 10, 0, -3.75, 5);
         turtleShape.setStroke(penColor);
         turtleShape.setFill(fillColor);
         turtleShape.setTranslateX(WIDTH / 2);
         turtleShape.setTranslateY(HEIGHT / 2);
 
-        // add the turtle to the root node...
+        // add the Turtle to the root node...
         root.getChildren().add(turtleShape);
 
         // the pen starts in the down state by default
@@ -195,7 +195,7 @@ public class turtle {
         // the tracer is enabled by default
         tracer = true;
 
-        // by default the turtle;s world is not displayed.
+        // by default the Turtle;s world is not displayed.
         notDisplayed = true;
 
         // init the application
@@ -203,7 +203,7 @@ public class turtle {
     }
 
     /**
-     * Enables or disables the tracer. If the tracer is enabled, the turtle's
+     * Enables or disables the tracer. If the tracer is enabled, the Turtle's
      * drawings are animated. If the tracer is disabled, the drawings are
      * essentially instantaneous.
      *
@@ -257,7 +257,7 @@ public class turtle {
      *              {@link Color} class.
      */
     public void color(String color) {
-        turtle.penColor(color);
+        Turtle.penColor(color);
     }
 
     /**
@@ -269,7 +269,7 @@ public class turtle {
      * @param blue The value for the red channel.
      */
     public void color(double red, double green, double blue) {
-        turtle.penColor(red, green, blue);
+        Turtle.penColor(red, green, blue);
     }
 
     /**
@@ -362,20 +362,20 @@ public class turtle {
 
 
     /**
-     * Moves the turtle the specified distance in the direction that it is
+     * Moves the Turtle the specified distance in the direction that it is
      * currently facing.
      *
-     * @param distance The distance to move the turtle.
+     * @param distance The distance to move the Turtle.
      */
     public void fd(double distance) {
         forward(distance);
     }
 
     /**
-     * Moves the turtle the specified distance in the direction that it is
+     * Moves the Turtle the specified distance in the direction that it is
      * currently facing.
      *
-     * @param distance The distance to move the turtle.
+     * @param distance The distance to move the Turtle.
      */
     public void forward(double distance) {
         Point2D end = calculateEndPoint(angle, location, distance);
@@ -384,27 +384,27 @@ public class turtle {
     }
 
     /**
-     * Moves the turtle backwards the specified distance.
+     * Moves the Turtle backwards the specified distance.
      *
-     * @param distance This distance to move the turtle backwards.
+     * @param distance This distance to move the Turtle backwards.
      */
     public void bk(double distance) {
         backward(distance);
     }
 
     /**
-     * Moves the turtle backwards the specified distance.
+     * Moves the Turtle backwards the specified distance.
      *
-     * @param distance This distance to move the turtle backwards.
+     * @param distance This distance to move the Turtle backwards.
      */
     public void back(double distance) {
         backward(distance);
     }
 
     /**
-     * Moves the turtle backwards the specified distance.
+     * Moves the Turtle backwards the specified distance.
      *
-     * @param distance This distance to move the turtle backwards.
+     * @param distance This distance to move the Turtle backwards.
      */
     public void backward(double distance) {
         Point2D end = calculateEndPoint(angle + 180, location, distance);
@@ -412,18 +412,18 @@ public class turtle {
     }
 
     /**
-     * Turns the turtle right the specified number of degrees.
+     * Turns the Turtle right the specified number of degrees.
      *
-     * @param degrees The number of degrees to turn the turtle to the right.
+     * @param degrees The number of degrees to turn the Turtle to the right.
      */
     public void rt(double degrees) {
         right(degrees);
     }
 
     /**
-     * Turns the turtle right the specified number of degrees.
+     * Turns the Turtle right the specified number of degrees.
      *
-     * @param degrees The number of degrees to turn the turtle to the right.
+     * @param degrees The number of degrees to turn the Turtle to the right.
      */
     public synchronized void right(double degrees) {
         display();
@@ -437,18 +437,18 @@ public class turtle {
     }
 
     /**
-     * Turns the turtle left the specified number of degrees.
+     * Turns the Turtle left the specified number of degrees.
      *
-     * @param degrees The number of degrees to turn the turtle to the left.
+     * @param degrees The number of degrees to turn the Turtle to the left.
      */
     public void lt(double degrees) {
         left(degrees);
     }
 
     /**
-     * Turns the turtle left the specified number of degrees.
+     * Turns the Turtle left the specified number of degrees.
      *
-     * @param degrees The number of degrees to turn the turtle to the left.
+     * @param degrees The number of degrees to turn the Turtle to the left.
      */
     public void left(double degrees) {
         display();
@@ -462,33 +462,33 @@ public class turtle {
     }
 
     /**
-     * Moves the turtle to the specified x/y coordinate. If the pen is down,
-     * the turtle draws a line.
+     * Moves the Turtle to the specified x/y coordinate. If the pen is down,
+     * the Turtle draws a line.
      *
-     * @param x The turtle's new x coordinate.
-     * @param y The turtle's new y coordinate.
+     * @param x The Turtle's new x coordinate.
+     * @param y The Turtle's new y coordinate.
      */
     public void goTo(double x, double y) {
         setPosition(x, y);
     }
 
     /**
-     * Moves the turtle to the specified x/y coordinate. If the pen is down,
-     * the turtle draws a line.
+     * Moves the Turtle to the specified x/y coordinate. If the pen is down,
+     * the Turtle draws a line.
      *
-     * @param x The turtle's new x coordinate.
-     * @param y The turtle's new y coordinate.
+     * @param x The Turtle's new x coordinate.
+     * @param y The Turtle's new y coordinate.
      */
     public void setPos(double x, double y) {
         setPosition(x, y);
     }
 
     /**
-     * Moves the turtle to the specified x/y coordinate. If the pen is down,
-     * the turtle draws a line.
+     * Moves the Turtle to the specified x/y coordinate. If the pen is down,
+     * the Turtle draws a line.
      *
-     * @param x The turtle's new x coordinate.
-     * @param y The turtle's new y coordinate.
+     * @param x The Turtle's new x coordinate.
+     * @param y The Turtle's new y coordinate.
      */
     public void setPosition(double x, double y) {
         display();
@@ -531,22 +531,22 @@ public class turtle {
     }
 
     /**
-     * Moves the turtle to the specified x coordinate. The turtle's y
-     * coordinate remains unchanged. If the pen is down, the turtle draws a
+     * Moves the Turtle to the specified x coordinate. The Turtle's y
+     * coordinate remains unchanged. If the pen is down, the Turtle draws a
      * line.
      *
-     * @param x The turtle's new x coordinate.
+     * @param x The Turtle's new x coordinate.
      */
     public void setX(double x) {
         setPosition(x, location.getY());
     }
 
     /**
-     * Moves the turtle to the specified y coordinate. The turtle's x
-     * coordinate remains unchanged. If the pen is down, the turtle draws a
+     * Moves the Turtle to the specified y coordinate. The Turtle's x
+     * coordinate remains unchanged. If the pen is down, the Turtle draws a
      * line.
      *
-     * @param y The turtle's new x coordinate.
+     * @param y The Turtle's new x coordinate.
      */
     public void setY(double y) {
         setPosition(location.getX(), y);
@@ -575,9 +575,9 @@ public class turtle {
     }
 
     /**
-     * Sets the turtle's speed to the specified value.
+     * Sets the Turtle's speed to the specified value.
      *
-     * @param speed The new speed of the turtle, a value between 1 (slow) and
+     * @param speed The new speed of the Turtle, a value between 1 (slow) and
      *              10 (fast) or 0 (fastest).
      */
     public void speed(int speed) {
@@ -593,7 +593,7 @@ public class turtle {
     }
 
     /**
-     * Sets the title displayed in the turtle's window.
+     * Sets the title displayed in the Turtle's window.
      *
      * @param title The new title.
      */
@@ -617,13 +617,13 @@ public class turtle {
 
         // this is currently very slow. but it works!
         for(int i=0; i<circumference; i++) {
-            turtle.forward(1);
-            turtle.left(degrees);
+            Turtle.forward(1);
+            Turtle.left(degrees);
         }
     }
 
     /**
-     * Sets the world coordinates for the turtle's world.
+     * Sets the world coordinates for the Turtle's world.
      *
      * @param llx The x coordinate for the lower left corner of the world.
      * @param lly The y coordinate for the lower left corner of the world.
@@ -640,18 +640,18 @@ public class turtle {
     /////////////////////////////////////////////////////////////////////////
     /**
      * Performs the specified animation. First sets the on finished handler
-     * to notify the turtle when the animation is complete. Then starts the
+     * to notify the Turtle when the animation is complete. Then starts the
      * animation. Finally, waits for notification that the animation is
      * complete.
      *
      * @param animation The animation to execute.
      */
     private synchronized void animate(Animation animation) {
-        // set the on finished handler to stop the turtle from blocking
+        // set the on finished handler to stop the Turtle from blocking
         animation.setOnFinished((e) -> {
-            synchronized(turtle.this) {
-                // this will wake the turtle from the wait state
-                turtle.notify();
+            synchronized(Turtle.this) {
+                // this will wake the Turtle from the wait state
+                Turtle.notify();
             }
         });
         // play the animation
@@ -685,11 +685,11 @@ public class turtle {
         // wrap the runner in another runnable that...
         Platform.runLater(() -> {
             // obtains the synchronization lock...
-            synchronized(turtle.this) {
+            synchronized(Turtle.this) {
                 // starts the runner
                 runner.run();
-                // once it is complete, notifies the waiting turtle
-                turtle.this.notify();
+                // once it is complete, notifies the waiting Turtle
+                Turtle.this.notify();
             }
         });
         // wait for notification
@@ -697,14 +697,14 @@ public class turtle {
     }
 
     /**
-     * The turtle uses a coordinate plane where the origin, (0,0) is in the
+     * The Turtle uses a coordinate plane where the origin, (0,0) is in the
      * center of the canvas the y is positive in the UP direction. JavaFX uses
      * a coordinate plane where the origin, (0, 0), is in the top left corner
-     * of the screen and y is positive in the DOWN direction. Given a turtle
+     * of the screen and y is positive in the DOWN direction. Given a Turtle
      * coordinate as a {@link Point2D}, this method will translate it into a
      * JavaFX coordinate.
      *
-     * @param point The turtle coordinate as a {@link Point2D}.
+     * @param point The Turtle coordinate as a {@link Point2D}.
      *
      * @return The translated coordinate as a{@link Point2D}.
      */
@@ -713,15 +713,15 @@ public class turtle {
     }
 
     /**
-     * The turtle uses a coordinate plane where the origin, (0,0) is in the
+     * The Turtle uses a coordinate plane where the origin, (0,0) is in the
      * center of the canvas the y is positive in the UP direction. JavaFX uses
      * a coordinate plane where the origin, (0, 0), is in the top left corner
-     * of the screen and y is positive in the DOWN direction. Given a turtle
+     * of the screen and y is positive in the DOWN direction. Given a Turtle
      * coordinate as an x/y pair, this method will translate it into a JavaFX
      * coordinate.
      *
-     * @param x The turtle's x coordinate.
-     * @param y The turtle's y coordinate.
+     * @param x The Turtle's x coordinate.
+     * @param y The Turtle's y coordinate.
      *
      * @return The translated coordinate as a {@link Point2D}.
      */
@@ -734,11 +734,11 @@ public class turtle {
 
     /**
      * Given an angle, a starting point, and a distance, calculates the end
-     * point that a turtle would arrive at.
+     * point that a Turtle would arrive at.
      *
-     * @param angle The angle of the turtle.
+     * @param angle The angle of the Turtle.
      * @param start The starting point.
-     * @param distance The distance that the turtle should move.
+     * @param distance The distance that the Turtle should move.
      * @return The end point.
      */
     private Point2D calculateEndPoint(double angle, Point2D start,
@@ -773,7 +773,7 @@ public class turtle {
         if(tracer) {
             // calculate the distance
             double distance = euclidianDistance(startX, startY, endX, endY);
-            // calculate the number of pixels that the turtle should travel
+            // calculate the number of pixels that the Turtle should travel
             // per second
             double pixels_per_second = PIXELS_PER_UNIT_OF_SPEED *
                     getRealSpeed();
@@ -791,7 +791,7 @@ public class turtle {
      * Given a number of degrees, returns the approriate duration
      * of the animation given the current speed and tracer settings.
      *
-     * @param degrees The number of degrees that the turtle is to turn.
+     * @param degrees The number of degrees that the Turtle is to turn.
      *
      * @return The {@link Duration} that the animation should require.
      */
@@ -809,18 +809,18 @@ public class turtle {
     }
 
     /**
-     * Translates returns a real speed representing the turtle's current
+     * Translates returns a real speed representing the Turtle's current
      * speed. For values 1 to 10, simple returns the speed. For 0, returns an
      * appropriately, ridiculously fast speed.
      *
-     * @return The speed of the turtle based on the current speed setting.
+     * @return The speed of the Turtle based on the current speed setting.
      */
     private double getRealSpeed() {
         return speed == SPEED_FASTEST ? 1000 : speed;
     }
 
     /**
-     * Sets the turtle's pen color using an animation to insure that it occurs
+     * Sets the Turtle's pen color using an animation to insure that it occurs
      * at the appropriate point in time (otherwise the color would change in
      * the midst of other animations; nonsensical).
      *
@@ -835,7 +835,7 @@ public class turtle {
     }
 
     /**
-     * Sets the turtle's fill color using an animation to insure that it
+     * Sets the Turtle's fill color using an animation to insure that it
      * occurs at the appropriate point in time (otherwise the color would
      * change in the midst of other animations; nonsensical).
      *
@@ -913,30 +913,30 @@ public class turtle {
     }
 
     /**
-     * If the JavaFX turtle application is not yet displayed, this method will
+     * If the JavaFX Turtle application is not yet displayed, this method will
      * display it. It is called automatically from any method that moves the
-     * turtle. This method blocks until the application has started.
+     * Turtle. This method blocks until the application has started.
      */
     private synchronized void display() {
         if(notDisplayed) {
             // initialize the JavaFX platform
             Platform.startup(() -> {
-                synchronized(turtle.this) {
-                    turtle.this.notify();
+                synchronized(Turtle.this) {
+                    Turtle.this.notify();
                 }
             });
             // wait for the platform to startup
             waitForNotify();
 
-            // launch the turtle application
+            // launch the Turtle application
             Platform.runLater(() -> {
                 try {
                     application.start(new Stage());
                 } catch (Exception e) {
                     // squash
                 }
-                synchronized(turtle.this) {
-                    turtle.this.notify();
+                synchronized(Turtle.this) {
+                    Turtle.this.notify();
                 }
             });
             // wait for the application to start up
@@ -946,7 +946,7 @@ public class turtle {
     }
 
     /**
-     * The turtle application. Displays the turtle's world in a JavaFX window.
+     * The Turtle application. Displays the Turtle's world in a JavaFX window.
      */
     private static class TurtleApp extends Application {
         /**
@@ -970,12 +970,12 @@ public class turtle {
         /**
          * Starts the application.
          *
-         * @param primaryStage The {@link Stage} on which the turtle will
+         * @param primaryStage The {@link Stage} on which the Turtle will
          *                     draw.
          */
         @Override
         public void start(Stage primaryStage) {
-            Scene scene = new Scene(turtle.root, WIDTH, HEIGHT,
+            Scene scene = new Scene(Turtle.root, WIDTH, HEIGHT,
                     Color.WHITE);
 
             stage = primaryStage;

@@ -1,15 +1,15 @@
-import static turtle.turtle.*;
+import static turtle.Turtle.*;
 
 public class turtleTest {
     public static void main(String[] args) {
         System.out.println("Turning left...");
-        turtle.left(360);
+        Turtle.left(360);
         System.out.println("left done, right...");
-        turtle.right(360);
+        Turtle.right(360);
         System.out.println("done");
 
-        turtle.setPosition(50, 50);
+        Turtle.setPosition(50, 50);
 
-        turtle.circle(100);
+        Turtle.circle(100);
     }
 }
