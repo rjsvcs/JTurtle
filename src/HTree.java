@@ -3,6 +3,7 @@ import static turtle.turtle.*;
 public class HTree {
 
     public static void init(int length, int depth) {
+        turtle.setWorldCoordinates(200, 200, 200, 200 );
         turtle.title("H-Tree, depth: " + depth);
     }
 
@@ -49,7 +50,8 @@ public class HTree {
         int depth = 3;
 
         init(length, depth);
-        turtle.speed(0);
+        turtle.speed(7);
+        turtle.penColor("orange");
         drawHTree(length, depth);
     }
 }

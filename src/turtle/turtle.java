@@ -598,8 +598,10 @@ public class turtle {
      * @param title The new title.
      */
     public void title(String title) {
-        application.setTitle(title);
         display();
+        runInApplicationThread(() -> {
+            application.setTitle(title);
+        });
     }
 
     /**
