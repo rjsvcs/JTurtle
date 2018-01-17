@@ -921,12 +921,7 @@ public class Turtle {
         if(notDisplayed) {
             // initialize the JavaFX platform
             Platform.startup(() -> {
-                //synchronized(Turtle.this) {
-                //    Turtle.this.notify();
-                //}
             });
-            // wait for the platform to startup
-            //waitForNotify();
 
             // launch the Turtle application
             Platform.runLater(() -> {
