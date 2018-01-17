@@ -50,7 +50,7 @@ public class HTree {
         int depth = 3;
 
         init(length, depth);
-        Turtle.speed(7);
+        Turtle.speed(0);
         Turtle.penColor("orange");
         drawHTree(length, depth);
     }
