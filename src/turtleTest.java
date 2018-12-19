@@ -10,6 +10,10 @@ public class turtleTest {
 
         Turtle.setPosition(50, 50);
 
+        Turtle.penColor("red");
+
+        Turtle.drawText("Testing 1...2...3...");
+
         Turtle.circle(100);
     }
 }

@@ -17,6 +17,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -61,12 +62,12 @@ public class Turtle {
     /**
      * The default width of the Turtle's world in pixels.
      */
-    private static final double WIDTH = 800;
+    private static double WIDTH = 800;
 
     /**
      * The default height of the Turtle's world.
      */
-    private static final double HEIGHT = 800;
+    private static double HEIGHT = 800;
 
     /**
      * Default speed in pixels per second.
@@ -200,6 +201,33 @@ public class Turtle {
 
         // init the application
         application = new TurtleApp();
+    }
+
+    /**
+     * setup must be called before any other turtle function.
+     * setup changes the width and height and resets the location.
+     *
+     * @param width canvas dimension in pixels
+     * @param height canvas dimension in pixels
+     */
+    public static void setup( double width, double height ) {
+        Turtle.WIDTH = (width > 0) ? width : 800;
+        Turtle.HEIGHT = (height > 0) ? height : 800;
+        Turtle.location = new Point2D(0, 0); // bks: location depends on wxh
+    }
+
+    /**
+     * @return width canvas dimension in pixels
+     */
+    public static double getWidth() {
+        return Turtle.WIDTH;
+    }
+
+    /**
+     * @return height canvas dimension in pixels
+     */
+    public static double getHeight() {
+        return Turtle.HEIGHT;
     }
 
     /**
@@ -359,7 +387,6 @@ public class Turtle {
     public void penUp() {
         penDown = false;
     }
-
 
     /**
      * Moves the Turtle the specified distance in the direction that it is
@@ -633,6 +660,23 @@ public class Turtle {
     public void setWorldCoordinates(int llx, int lly, int urx, int ury) {
         display();
         // does nothing...yet
+    }
+
+    /**
+     * Draws the specified text on the Turtle canvas.
+     *
+     * @param message The message that the turtle should draw.
+     */
+    public void drawText( String message) {
+
+        display();
+
+        Point2D start = translateToCoordinates(location);
+
+        Text text = new Text(start.getX(), start.getY(), message);
+        text.setFill(penColor);
+
+        runInApplicationThread(() -> this.root.getChildren().add(text));
     }
 
     /////////////////////////////////////////////////////////////////////////
