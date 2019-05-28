@@ -155,11 +155,15 @@ public class Turtle {
      */
     private TurtleApp application;
 
-    //
-    // fill support (experimental)
-    //
-
+    /**
+     * Indicates whether or not the turtle is currently filling with color.
+     */
     private boolean filling;
+
+    /**
+     * Keeps track of points along the path that the turtle moves while it is
+     * filling.
+     */
     private Path fillPath;
 
     /**
@@ -235,6 +239,28 @@ public class Turtle {
      */
     public static double getHeight() {
         return Turtle.HEIGHT;
+    }
+
+    /**
+     * Sets the background color to the specified color.
+     *
+     * @param color The name of the color to which the background color should
+     *             be set. Must be a valid color from the colors defined in the
+     *             {@link Color} class.
+     */
+    public void bgcolor(String color) {
+        bgcolor(makeColor(color));
+    }
+
+    /**
+     * Sets the background color to the specified color.
+     *
+     * @param red The value for the red channel.
+     * @param green The value for the green channel.
+     * @param blue The value for the white channel.
+     */
+    public void bgcolor(double red, double green, double blue) {
+        bgcolor(makeColor(red, green, blue));
     }
 
     /**
@@ -357,38 +383,39 @@ public class Turtle {
     // fill support (experimental)
     //
 
+    /**
+     * Called just before the turtle begins drawing a shape that should be
+     * filled in with a solid color.
+     */
     public void beginFill() {
         if(!filling) {
+            // make sure that the toolkit is set up
             display();
             filling = true;
+            // create a new path with a transparent stroke and the even/odd
+            // fill rule
             fillPath = new Path();
             fillPath.setStroke(Color.TRANSPARENT);
+            fillPath.setFillRule(FillRule.EVEN_ODD);
             Point2D begin = translateToCoordinates(location);
             fillPath.getElements().add(new MoveTo(begin.getX(), begin.getY()));
             runInApplicationThread(() -> root.getChildren().add(fillPath));
         }
     }
 
+    /**
+     * Fills the shape that the turtle has drawn since {@link #beginFill()}
+     * was called. Has no effect if {@link #beginFill()} was not called,
+     */
     public void endFill() {
         if(filling) {
-            System.out.println(fillPath);
             Timeline animation = new Timeline(new KeyFrame(Duration.ONE,
                     new KeyValue(fillPath.fillProperty(), fillColor)));
-            animate(animation, false);
+            animate(animation, true);
             filling = false;
             fillPath = null;
         }
     }
-
-    private void addPointToFillPath(Point2D to) {
-        if(filling) {
-            LineTo line = new LineTo();
-            line.setX(to.getX());
-            line.setY(to.getY());
-            fillPath.getElements().add(line);
-        }
-    }
-
 
     /**
      * Sets the pen into the down (drawing) position.
@@ -589,8 +616,10 @@ public class Turtle {
             animation.getKeyFrames().add(new KeyFrame(Duration.ONE,
                     new KeyValue(line.strokeProperty(), penColor)));
 
-            runInApplicationThread(() -> root.getChildren().add(line));
-            runInApplicationThread(() -> line.toFront());
+            runInApplicationThread(() -> {
+                root.getChildren().add(line);
+                line.toFront();
+            });
 
             keyValues[2] = new KeyValue(line.endXProperty(), end.getX());
             keyValues[3] = new KeyValue(line.endYProperty(), end.getY());
@@ -917,6 +946,22 @@ public class Turtle {
     }
 
     /**
+     * Adds the specified point to the current fill path. This is used to
+     * determine that shape that should be filled in.
+     *
+     * @param to The point to which a line should be drawn from the last point
+     *           added to the path.
+     */
+    private void addPointToFillPath(Point2D to) {
+        if(filling) {
+            LineTo line = new LineTo();
+            line.setX(to.getX());
+            line.setY(to.getY());
+            fillPath.getElements().add(line);
+        }
+    }
+
+    /**
      * Sets the Turtle's pen color using an animation to insure that it occurs
      * at the appropriate point in time (otherwise the color would change in
      * the midst of other animations; nonsensical).
@@ -944,6 +989,16 @@ public class Turtle {
         Timeline animation = new Timeline(new KeyFrame(Duration.ONE,
                 new KeyValue(turtleShape.fillProperty(), color)));
         animate(animation, false);
+    }
+
+    /**
+     * Sets the background color to the specified color.
+     *
+     * @param color The color to which the background should be set.
+     */
+    private void bgcolor(Color color) {
+        display();
+        application.stage.getScene().setFill(color);
     }
 
     /**
