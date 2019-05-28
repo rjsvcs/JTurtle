@@ -460,7 +460,7 @@ public class Turtle {
         Timeline animation = new Timeline(
                 new KeyFrame(getDuration(degrees),
                 new KeyValue(turtleShape.rotateProperty(), angle)));
-        animate(animation);
+        animate(animation, true);
     }
 
     /**
@@ -485,7 +485,7 @@ public class Turtle {
         Timeline animation = new Timeline(
                 new KeyFrame(getDuration(degrees),
                 new KeyValue(turtleShape.rotateProperty(), angle)));
-        animate(animation);
+        animate(animation, true);
     }
 
     /**
@@ -552,7 +552,7 @@ public class Turtle {
 
         animation.getKeyFrames().add(
                 new KeyFrame(duration, keyValues));
-        animate(animation);
+        animate(animation, penDown);
 
         runInApplicationThread(() ->  turtleShape.toFront());
     }
@@ -690,18 +690,22 @@ public class Turtle {
      *
      * @param animation The animation to execute.
      */
-    private synchronized void animate(Animation animation) {
-        // set the on finished handler to stop the Turtle from blocking
-        animation.setOnFinished((e) -> {
-            synchronized(Turtle.this) {
-                // this will wake the Turtle from the wait state
-                Turtle.this.notify();
-            }
-        });
-        // play the animation
-        animation.play();
-        // wait for notification that the animation is done
-        waitForNotify();
+    private synchronized void animate(Animation animation, boolean threaded) {
+        if(threaded) {
+            // set the on finished handler to stop the Turtle from blocking
+            animation.setOnFinished((e) -> {
+                synchronized (Turtle.this) {
+                    // this will wake the Turtle from the wait state
+                    Turtle.this.notify();
+                }
+            });
+            // play the animation
+            animation.play();
+            // wait for notification that the animation is done
+            waitForNotify();
+        } else {
+            animation.play();
+        }
     }
 
     /**
@@ -875,7 +879,7 @@ public class Turtle {
 
         Timeline animation = new Timeline(new KeyFrame(Duration.ONE,
                 new KeyValue(turtleShape.strokeProperty(), color)));
-        animate(animation);
+        animate(animation, false);
     }
 
     /**
@@ -890,7 +894,7 @@ public class Turtle {
 
         Timeline animation = new Timeline(new KeyFrame(Duration.ONE,
                 new KeyValue(turtleShape.fillProperty(), color)));
-        animate(animation);
+        animate(animation, false);
     }
 
     /**
