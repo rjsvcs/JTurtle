@@ -155,6 +155,13 @@ public class Turtle {
      */
     private TurtleApp application;
 
+    //
+    // fill support (experimental)
+    //
+
+    private boolean filling;
+    private Path fillPath;
+
     /**
      * Initializes the Turtle with its default settings.
      */
@@ -346,6 +353,43 @@ public class Turtle {
         fillColor(makeColor(color));
     }
 
+    //
+    // fill support (experimental)
+    //
+
+    public void beginFill() {
+        if(!filling) {
+            display();
+            filling = true;
+            fillPath = new Path();
+            fillPath.setStroke(Color.TRANSPARENT);
+            Point2D begin = translateToCoordinates(location);
+            fillPath.getElements().add(new MoveTo(begin.getX(), begin.getY()));
+            runInApplicationThread(() -> root.getChildren().add(fillPath));
+        }
+    }
+
+    public void endFill() {
+        if(filling) {
+            System.out.println(fillPath);
+            Timeline animation = new Timeline(new KeyFrame(Duration.ONE,
+                    new KeyValue(fillPath.fillProperty(), fillColor)));
+            animate(animation, false);
+            filling = false;
+            fillPath = null;
+        }
+    }
+
+    private void addPointToFillPath(Point2D to) {
+        if(filling) {
+            LineTo line = new LineTo();
+            line.setX(to.getX());
+            line.setY(to.getY());
+            fillPath.getElements().add(line);
+        }
+    }
+
+
     /**
      * Sets the pen into the down (drawing) position.
      */
@@ -524,6 +568,10 @@ public class Turtle {
         location = new Point2D(x, y);
         Point2D end = translateToCoordinates(location);
 
+        if(filling) {
+            addPointToFillPath(end);
+        }
+
         Timeline animation = new Timeline();
 
         KeyValue[] keyValues = new KeyValue[penDown ? 4 : 2];
@@ -542,6 +590,7 @@ public class Turtle {
                     new KeyValue(line.strokeProperty(), penColor)));
 
             runInApplicationThread(() -> root.getChildren().add(line));
+            runInApplicationThread(() -> line.toFront());
 
             keyValues[2] = new KeyValue(line.endXProperty(), end.getX());
             keyValues[3] = new KeyValue(line.endYProperty(), end.getY());
