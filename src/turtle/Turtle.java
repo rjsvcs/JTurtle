@@ -938,7 +938,8 @@ public class Turtle {
         if(tracer) {
             double degrees_per_second = DEGREES_PER_UNIT_0F_SPEED *
                     getRealSpeed();
-            double seconds = degrees / degrees_per_second;
+            double seconds =
+                    (degrees >= 0 ? degrees : -degrees) / degrees_per_second;
 
             return Duration.millis(seconds * 1000);
         }
