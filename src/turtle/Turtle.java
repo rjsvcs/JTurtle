@@ -3,6 +3,7 @@
  * be programmatically controlled to draw pictures using a turtle.
  *
  * @author Bobby St. Jacques
+ * @author Ben K. Steele - contributed drawText method.
  */
 package turtle;
 
@@ -715,13 +716,25 @@ public class Turtle {
      * @param radius The radius of the circle to draw.
      */
     public void circle(double radius) {
+        circle(radius, 360);
+    }
+
+    /**
+     * Draws a circle with the specified radius.
+     *
+     * @param radius The radius of the circle to draw.
+     * @param extent The extent of the circle.
+     */
+    public void circle(double radius, double extent) {
         display();
 
         int circumference = (int)Math.ceil(Math.PI * radius * 2);
         double degrees = 360.0 / circumference;
 
+        double actual = circumference * (extent / 360);
+
         // this is currently very slow. but it works!
-        for(int i=0; i<circumference; i++) {
+        for(int i=0; i<actual; i++) {
             forward(1);
             Turtle.left(degrees);
         }

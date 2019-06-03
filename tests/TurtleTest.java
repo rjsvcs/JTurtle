@@ -1,6 +1,6 @@
 import static turtle.Turtle.*;
 
-public class turtleTest {
+public class TurtleTest {
     public static void main(String[] args) {
         System.out.println("Turning left...");
         Turtle.left(360);
@@ -14,6 +14,9 @@ public class turtleTest {
 
         Turtle.drawText("Testing 1...2...3...");
 
+        Turtle.fillColor(0, 0, 1);
+       // Turtle.beginFill();
         Turtle.circle(100);
+       // Turtle.endFill();
     }
 }
