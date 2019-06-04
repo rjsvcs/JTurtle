@@ -22,6 +22,17 @@ public class FillTest {
         Turtle.endFill();
         Turtle.bgcolor(0.5, 0.5, 0.5);
 
+        Turtle.up();
+        Turtle.setPosition(-200, -200);
+        Turtle.down();
+        Turtle.width(3);
+        Turtle.beginFill();
+        for(int i=0; i<4; i++) {
+            Turtle.forward(100);
+            Turtle.left(90);
+        }
+        Turtle.endFill();
+
     }
 
     private static void polygon(double length, int sides) {

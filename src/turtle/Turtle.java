@@ -419,6 +419,39 @@ public class Turtle {
     }
 
     /**
+     * Shows the turtle if it is hidden.
+     */
+    public void showTurtle() {
+        if(turtleShape.getParent() == null) {
+            runInApplicationThread(() -> root.getChildren().add(turtleShape));
+        }
+    }
+
+    /**
+     * Shows the turtle if it is hidden.
+     */
+    public void st() {
+        showTurtle();
+    }
+
+    /**
+     * Hides the turtle if it is visible.
+     */
+    public void hideTurtle() {
+        if(turtleShape.getParent() != null) {
+            runInApplicationThread(
+                    () -> root.getChildren().removeAll(turtleShape));
+        }
+    }
+
+    /**
+     * Hides the turtle if it is visible.
+     */
+    public void ht() {
+        hideTurtle();
+    }
+
+    /**
      * Sets the pen into the down (drawing) position.
      */
     public void pd() {
@@ -593,6 +626,7 @@ public class Turtle {
         display();
 
         Point2D start = translateToCoordinates(location);
+
         location = new Point2D(x, y);
         Point2D end = translateToCoordinates(location);
 
