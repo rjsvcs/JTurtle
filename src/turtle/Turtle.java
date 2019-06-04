@@ -412,7 +412,7 @@ public class Turtle {
         if(filling) {
             Timeline animation = new Timeline(new KeyFrame(Duration.ONE,
                     new KeyValue(fillPath.fillProperty(), fillColor)));
-            animate(animation, true);
+            new Animator(animation).animate();
             filling = false;
             fillPath = null;
         }
@@ -532,7 +532,7 @@ public class Turtle {
         Timeline animation = new Timeline(
                 new KeyFrame(getDuration(degrees),
                 new KeyValue(turtleShape.rotateProperty(), angle)));
-        animate(animation, true);
+        new Animator(animation).animate();
     }
 
     /**
@@ -557,7 +557,7 @@ public class Turtle {
         Timeline animation = new Timeline(
                 new KeyFrame(getDuration(degrees),
                 new KeyValue(turtleShape.rotateProperty(), angle)));
-        animate(animation, true);
+        new Animator(animation).animate();
     }
 
     /**
@@ -631,7 +631,7 @@ public class Turtle {
 
         animation.getKeyFrames().add(
                 new KeyFrame(duration, keyValues));
-        animate(animation, penDown);
+        new Animator(animation).animate();
 
         runInApplicationThread(() ->  turtleShape.toFront());
     }
@@ -773,32 +773,6 @@ public class Turtle {
     /////////////////////////////////////////////////////////////////////////
     // PRIVATE METHODS. Most of these translate turtlish stuff to JavaFX.  //
     /////////////////////////////////////////////////////////////////////////
-    /**
-     * Performs the specified animation. First sets the on finished handler
-     * to notify the Turtle when the animation is complete. Then starts the
-     * animation. Finally, waits for notification that the animation is
-     * complete.
-     *
-     * @param animation The animation to execute.
-     */
-    private synchronized void animate(Animation animation, boolean threaded) {
-        if(threaded) {
-            // set the on finished handler to stop the Turtle from blocking
-            animation.setOnFinished((e) -> {
-                synchronized (Turtle.this) {
-                    // this will wake the Turtle from the wait state
-                    Turtle.this.notify();
-                }
-            });
-            // play the animation
-            animation.play();
-            // wait for notification that the animation is done
-            waitForNotify();
-        } else {
-            animation.play();
-        }
-    }
-
     /**
      * Helper method the sole purpose of which is to avoid clogging the code
      * throughout the class with try { wait() } catch(InterruptedException){}
@@ -987,7 +961,7 @@ public class Turtle {
 
         Timeline animation = new Timeline(new KeyFrame(Duration.ONE,
                 new KeyValue(turtleShape.strokeProperty(), color)));
-        animate(animation, false);
+        new Animator(animation).animate();
     }
 
     /**
@@ -1002,7 +976,7 @@ public class Turtle {
 
         Timeline animation = new Timeline(new KeyFrame(Duration.ONE,
                 new KeyValue(turtleShape.fillProperty(), color)));
-        animate(animation, false);
+        new Animator(animation).animate();
     }
 
     /**
@@ -1103,6 +1077,60 @@ public class Turtle {
             // wait for the application to start up
             waitForNotify();
             notDisplayed = false;
+        }
+    }
+
+    /**
+     * Helper class that compensates for the fact that sometimes JavaFX
+     * animates in the JavaFX application thread (and therefore the Turtle
+     * must wait for the animation to finish), and sometimes JavaFX animates
+     * in the main application thread (and therefore a wait will cause a
+     * hang).
+     */
+    private class Animator {
+        /**
+         * The {@link Animation} played by this animator.
+         */
+        private final Animation animation;
+
+        /**
+         * A boolean that indicates whether or not the animation has
+         * completed.
+         */
+        private boolean finished;
+
+        /**
+         * Creates a new animator for the specified {@link Animation}.
+         *
+         * @param animation The {@link Animation} played by this animator.
+         */
+        Animator(Animation animation) {
+            this.animation = animation;
+            finished = false;
+        }
+
+        /**
+         * Plays the {@link Animation} and, if necessary, waits for
+         * notification that the animation is complete.
+         */
+        private void animate() {
+            synchronized(Turtle.this) {
+                // set an on finished event handler to toggle the boolean
+                // and notify
+                animation.setOnFinished((e) -> {
+                    synchronized (Turtle.this) {
+                        finished = true;
+                        Turtle.this.notify();
+                    }
+                });
+
+                animation.play();
+
+                if (!finished) {
+                    // waits only if the animation is not already finished
+                    Turtle.this.waitForNotify();
+                }
+            }
         }
     }
 

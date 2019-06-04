@@ -2,7 +2,6 @@ import static turtle.Turtle.*;
 
 public class CircleTest {
     public static void main(String[] args) {
-
         Turtle.up();
         Turtle.left(45);
         Turtle.down();
@@ -12,6 +11,5 @@ public class CircleTest {
         Turtle.beginFill();
         Turtle.circle(100, 180);
         Turtle.endFill();
-
     }
 }
