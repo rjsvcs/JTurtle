@@ -412,7 +412,7 @@ public class Turtle {
         if(filling) {
             Timeline animation = new Timeline(new KeyFrame(Duration.ONE,
                     new KeyValue(fillPath.fillProperty(), fillColor)));
-            new Animator(animation).animate();
+            animate(animation);
             filling = false;
             fillPath = null;
         }
@@ -532,7 +532,7 @@ public class Turtle {
         Timeline animation = new Timeline(
                 new KeyFrame(getDuration(degrees),
                 new KeyValue(turtleShape.rotateProperty(), angle)));
-        new Animator(animation).animate();
+        animate(animation);
     }
 
     /**
@@ -557,7 +557,7 @@ public class Turtle {
         Timeline animation = new Timeline(
                 new KeyFrame(getDuration(degrees),
                 new KeyValue(turtleShape.rotateProperty(), angle)));
-        new Animator(animation).animate();
+        animate(animation);
     }
 
     /**
@@ -631,7 +631,7 @@ public class Turtle {
 
         animation.getKeyFrames().add(
                 new KeyFrame(duration, keyValues));
-        new Animator(animation).animate();
+        animate(animation);
 
         runInApplicationThread(() ->  turtleShape.toFront());
     }
@@ -773,6 +773,19 @@ public class Turtle {
     /////////////////////////////////////////////////////////////////////////
     // PRIVATE METHODS. Most of these translate turtlish stuff to JavaFX.  //
     /////////////////////////////////////////////////////////////////////////
+    /**
+     * Performs the specified animation. First sets the on finished handler
+     * to notify the Turtle when the animation is complete. Then starts the
+     * animation. Finally, waits for notification that the animation is
+     * complete.
+     *
+     * @param animation The animation to execute.
+     */
+    private synchronized void animate(Animation animation) {
+        Animator animator = new Animator(animation);
+        animator.animate();
+    }
+
     /**
      * Helper method the sole purpose of which is to avoid clogging the code
      * throughout the class with try { wait() } catch(InterruptedException){}
@@ -961,7 +974,7 @@ public class Turtle {
 
         Timeline animation = new Timeline(new KeyFrame(Duration.ONE,
                 new KeyValue(turtleShape.strokeProperty(), color)));
-        new Animator(animation).animate();
+        animate(animation);
     }
 
     /**
@@ -976,7 +989,7 @@ public class Turtle {
 
         Timeline animation = new Timeline(new KeyFrame(Duration.ONE,
                 new KeyValue(turtleShape.fillProperty(), color)));
-        new Animator(animation).animate();
+        animate(animation);
     }
 
     /**
