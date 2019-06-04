@@ -1004,6 +1004,7 @@ public class Turtle {
      * @param color The new pen color.
      */
     private void penColor(Color color) {
+        display();
         penColor = color;
 
         Timeline animation = new Timeline(new KeyFrame(Duration.ONE,
@@ -1019,6 +1020,7 @@ public class Turtle {
      * @param color The new fill color.
      */
     private void fillColor(Color color) {
+        display();
         fillColor = color;
 
         Timeline animation = new Timeline(new KeyFrame(Duration.ONE,
